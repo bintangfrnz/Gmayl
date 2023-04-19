@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Gmayl</string>
+
+    <!-- Send Message -->
+    <string name="send_message_title">Compose</string>
+    <string name="send_message_from">From</string>
+    <string name="send_message_to">To</string>
+    <string name="send_message_subject">Subject</string>
+    <string name="send_message_subject_hint">Your message subject</string>
+    <string name="send_message_message">Message</string>
+    <string name="send_message_message_hint">Enter your message here…</string>
+    <string name="send_message_encrypt_message">Encrypt Your Message</string>
+    <string name="send_message_digital_sign">Add Digital Sign</string>
+    <string name="send_message_send">Send</string>
 </resources>

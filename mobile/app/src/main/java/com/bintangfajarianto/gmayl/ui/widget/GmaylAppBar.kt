@@ -38,7 +38,6 @@ fun GmaylAppBar(
         modifier = modifier,
         navigationIcon = {
             GmaylNavigationIcon(
-                // Internally, AppBar has a 4.dp padding, since the design requires 16.dp padding, add another 12.dp here instead
                 modifier = Modifier.padding(horizontal = 12.dp),
                 navigationIcon = navigationIcon,
                 onClick = onClickNavigationIcon,
@@ -55,8 +54,8 @@ fun GmaylAppBar(
             }
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(
-            containerColor = if (title != null) Color.White else Color.Transparent,
-            scrolledContainerColor = if (title != null) Color.White else Color.Transparent,
+            containerColor = if (title != null) GmaylTheme.color.mist10 else Color.Transparent,
+            scrolledContainerColor = if (title != null) GmaylTheme.color.mist10 else Color.Transparent,
             navigationIconContentColor = GmaylTheme.color.mist100,
             titleContentColor = GmaylTheme.color.mist100,
             actionIconContentColor = GmaylTheme.color.mist100,
