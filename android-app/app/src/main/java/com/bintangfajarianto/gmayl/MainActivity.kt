@@ -4,9 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
@@ -15,12 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.bintangfajarianto.gmayl.core.RouteDestinationHandler
-import com.bintangfajarianto.gmayl.core.navigation.AuthRoute.LOGIN_ROUTE
+import com.bintangfajarianto.gmayl.core.navigation.AuthRoutes.LOGIN_ROUTE
+import com.bintangfajarianto.gmayl.core.navigation.HomeRoutes.HOME_ROUTE
 import com.bintangfajarianto.gmayl.core.navigation.authGraph
+import com.bintangfajarianto.gmayl.core.navigation.homeGraph
 import com.bintangfajarianto.gmayl.core.router.AppRouter
 import com.bintangfajarianto.gmayl.core.router.mapToDestination
 import com.bintangfajarianto.gmayl.domain.usecase.auth.LoginStatusUseCase
@@ -141,10 +140,8 @@ fun GmaylNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
-    val routeDestinationHandler: RouteDestinationHandler by rememberInstance()
-
     val startDestination = when {
-        isLogin -> "home"
+        isLogin -> HOME_ROUTE
         else -> LOGIN_ROUTE
     }
 
@@ -154,14 +151,6 @@ fun GmaylNavHost(
         startDestination = startDestination,
     ) {
         authGraph()
-        composable(route = "home") {
-            Button(
-                onClick = {
-                    routeDestinationHandler.sendDestination(AppRouter.Logout)
-                },
-            ) {
-                Text(text = "Logout")
-            }
-        }
+        homeGraph(navController = navController)
     }
 }
