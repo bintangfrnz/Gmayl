@@ -1,20 +1,24 @@
-package com.bintangfajarianto.gmayl.feature.auth
+package com.bintangfajarianto.gmayl.feature.vm.auth
 
 import com.bintangfajarianto.gmayl.base.BaseViewModel
 import com.bintangfajarianto.gmayl.core.RouteDestination
 import com.bintangfajarianto.gmayl.core.RouteDestinationHandler
+import com.bintangfajarianto.gmayl.core.router.AuthRouter
 import com.bintangfajarianto.gmayl.core.router.HomeRouter
 import com.bintangfajarianto.gmayl.core.validator.EmailValidator
 import com.bintangfajarianto.gmayl.core.validator.EmailValidatorActionResult
 import com.bintangfajarianto.gmayl.core.validator.PasswordValidator
 import com.bintangfajarianto.gmayl.core.validator.PasswordValidatorActionResult
 import com.bintangfajarianto.gmayl.data.model.general.DialogData
+import com.bintangfajarianto.gmayl.domain.usecase.auth.LoginUseCase
+import com.bintangfajarianto.gmayl.domain.usecase.auth.LoginUseCaseActionResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 
 class LoginViewModel(
     coroutineScope: CoroutineScope,
-    routeDestinationHandler: RouteDestinationHandler,
+    private val routeDestinationHandler: RouteDestinationHandler,
+    private val loginUseCase: LoginUseCase,
 ) : BaseViewModel<LoginViewState, LoginAction, LoginActionResult>(
     initialState = LoginViewState(),
     coroutineScope = coroutineScope,
@@ -34,9 +38,10 @@ class LoginViewModel(
             is LoginAction.OnInputPassword -> handleInputPassword(password = action.password)
         }
 
-    private fun login(email: String, password: String): LoginActionResult =
-        when {
-            else -> LoginActionResult.ShowDialog
+    private suspend fun login(email: String, password: String): LoginActionResult =
+        when (loginUseCase.invoke(LoginUseCase.Param(email, password))) {
+            is LoginUseCaseActionResult.Success -> LoginActionResult.NavigateToHome
+            is LoginUseCaseActionResult.Invalid -> LoginActionResult.ShowDialog
         }
 
     private fun handleInputEmail(email: String): LoginActionResult =
@@ -74,7 +79,12 @@ class LoginViewModel(
 
     override fun navigateToReducer(actionResult: LoginActionResult): RouteDestination? =
         when (actionResult) {
-            LoginActionResult.NavigateToHome -> HomeRouter.HomePage
+            LoginActionResult.NavigateToHome -> {
+                routeDestinationHandler.popUpToRoute = AuthRouter.LoginPage
+                routeDestinationHandler.inclusive = true
+
+                HomeRouter.HomePage
+            }
             else -> null
         }
 
@@ -116,7 +126,7 @@ class LoginViewModel(
         when (actionResult) {
             LoginActionResult.ShowDialog -> DialogData(
                 titleText = "Login Failed",
-                descriptionText = "Currently you can only login with email <b>admin@gmail.com</b> and password <b>admin</b>",
+                descriptionText = "Currently you can only login with email <b>admin@gmail.com</b> and password <b>admin123</b>",
                 positiveButtonText = "Okay",
             )
             else -> null

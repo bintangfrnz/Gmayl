@@ -23,20 +23,26 @@ import com.bintangfajarianto.gmayl.core.navigation.authGraph
 import com.bintangfajarianto.gmayl.core.router.AppRouter
 import com.bintangfajarianto.gmayl.core.router.AuthRouter
 import com.bintangfajarianto.gmayl.core.router.mapToDestination
+import com.bintangfajarianto.gmayl.domain.usecase.auth.LoginStatusUseCase
 import com.bintangfajarianto.gmayl.extension.navigate
 import com.bintangfajarianto.gmayl.theme.GmaylTheme
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.runBlocking
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.android.closestDI
 import org.kodein.di.compose.rememberInstance
 import org.kodein.di.compose.withDI
+import org.kodein.di.instance
 
 class MainActivity : ComponentActivity(), DIAware {
 
     override val di: DI by closestDI()
+
+    private val loginStatusUseCase: LoginStatusUseCase by instance()
+    private val isLogin by lazy { runBlocking { loginStatusUseCase(Unit).isLogin } }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +51,7 @@ class MainActivity : ComponentActivity(), DIAware {
         setContent {
             withDI(di = di) {
                 GmaylTheme {
-                    GmaylApp()
+                    GmaylApp(isLogin = isLogin)
                 }
             }
         }
@@ -53,7 +59,7 @@ class MainActivity : ComponentActivity(), DIAware {
 }
 
 @Composable
-fun GmaylApp(modifier: Modifier = Modifier) {
+fun GmaylApp(isLogin: Boolean, modifier: Modifier = Modifier) {
     val navController = rememberNavController()
 
     val routeDestinationHandler: RouteDestinationHandler by rememberInstance()
@@ -109,6 +115,7 @@ fun GmaylApp(modifier: Modifier = Modifier) {
     Scaffold(modifier = modifier) {
         GmaylNavHost(
             modifier = Modifier.padding(it),
+            isLogin = isLogin,
             navController = navController,
         )
     }
@@ -116,14 +123,21 @@ fun GmaylApp(modifier: Modifier = Modifier) {
 
 @Composable
 fun GmaylNavHost(
+    isLogin: Boolean,
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
     val routeDestinationHandler: RouteDestinationHandler by rememberInstance()
+
+    val startDestination = when {
+        isLogin -> "home"
+        else -> LOGIN_PAGE
+    }
+
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = LOGIN_PAGE,
+        startDestination = startDestination,
     ) {
         authGraph()
         composable(route = "home") {

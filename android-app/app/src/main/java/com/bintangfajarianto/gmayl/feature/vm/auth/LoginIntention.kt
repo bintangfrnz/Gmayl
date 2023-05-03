@@ -1,4 +1,4 @@
-package com.bintangfajarianto.gmayl.feature.auth
+package com.bintangfajarianto.gmayl.feature.vm.auth
 
 import com.bintangfajarianto.gmayl.base.Action
 import com.bintangfajarianto.gmayl.base.ActionResult
@@ -14,11 +14,7 @@ data class LoginViewState(
     val loading: Boolean = false,
     val dialogData: DialogData? = null,
     val navigateTo: RouteDestination? = null,
-) : ViewState {
-    companion object {
-        fun init() = LoginViewState()
-    }
-}
+) : ViewState
 
 sealed class LoginAction : Action {
     data class OnClickLogin(val email: String, val password: String) : LoginAction()

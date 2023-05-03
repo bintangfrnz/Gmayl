@@ -1,12 +1,18 @@
 package com.bintangfajarianto.gmayl.di
 
 import android.app.Application
+import com.bintangfajarianto.gmayl.data.constant.StorageConstant
+import com.bintangfajarianto.gmayl.data.storage.KeyValueStorage
+import com.bintangfajarianto.gmayl.data.storage.SecureStorage
 import com.bintangfajarianto.gmayl.di.constant.AppConstants
-import com.bintangfajarianto.gmayl.di.module.AuthModule
+import com.bintangfajarianto.gmayl.feature.di.FeatureAuthModule
 import com.bintangfajarianto.gmayl.di.module.RouteDestinationHandlerProviderModule
+import com.bintangfajarianto.gmayl.domain.di.auth.LoginStatusUseCaseModule
+import com.orhanobut.hawk.HawkBuilder
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.bindEagerSingleton
+import org.kodein.di.bindSingleton
 
 class GmaylApplication : Application(), DIAware {
     override val di: DI
@@ -15,9 +21,16 @@ class GmaylApplication : Application(), DIAware {
                 this@GmaylApplication
             }
 
+            bindSingleton<KeyValueStorage>(tag = StorageConstant.SECURE_STORAGE) {
+                SecureStorage(HawkBuilder(this@GmaylApplication))
+            }
+
             importOnce(RouteDestinationHandlerProviderModule)
 
             // Feature
-            importOnce(AuthModule)
+            importOnce(FeatureAuthModule)
+
+            // Specific UseCase
+            importOnce(LoginStatusUseCaseModule)
         }
 }
