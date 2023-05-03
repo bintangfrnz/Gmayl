@@ -30,6 +30,16 @@ abstract class BaseViewModel<VS : ViewState, A : Action, AR : ActionResult>(
 
     private val _actionFlow: MutableSharedFlow<A> = MutableSharedFlow()
 
+    init {
+        coroutineScope.launch {
+            _actionFlow.collect { action ->
+                Napier.i("Action called: $action", tag = this::class.simpleName)
+                val newActionResult = handleOnAction(action)
+                handleActionResult(newActionResult)
+            }
+        }
+    }
+
     fun onAction(action: A) {
         coroutineScope.launch {
             _actionFlow.emit(action)

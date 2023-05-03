@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Gmayl</string>
+
+    <!-- Auth -->
+    <string name="auth_login">Login</string>
+    <string name="auth_email">Email</string>
+    <string name="auth_email_hint">Your email</string>
+    <string name="auth_password">Password</string>
+    <string name="auth_password_hint">Enter your password</string>
+    <string name="auth_hide_password">Hide Password</string>
+    <string name="auth_show_password">Show Password</string>
 </resources>

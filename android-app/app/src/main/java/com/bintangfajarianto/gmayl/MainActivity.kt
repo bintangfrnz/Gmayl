@@ -18,9 +18,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.bintangfajarianto.gmayl.core.RouteDestinationHandler
+import com.bintangfajarianto.gmayl.core.navigation.AuthRoute.LOGIN_PAGE
+import com.bintangfajarianto.gmayl.core.navigation.authGraph
 import com.bintangfajarianto.gmayl.core.router.AppRouter
 import com.bintangfajarianto.gmayl.core.router.AuthRouter
-import com.bintangfajarianto.gmayl.core.router.HomeRouter
 import com.bintangfajarianto.gmayl.core.router.mapToDestination
 import com.bintangfajarianto.gmayl.extension.navigate
 import com.bintangfajarianto.gmayl.theme.GmaylTheme
@@ -122,17 +123,9 @@ fun GmaylNavHost(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = "login",
+        startDestination = LOGIN_PAGE,
     ) {
-        composable(route = "login") {
-            Button(
-                onClick = {
-                    routeDestinationHandler.sendDestination(HomeRouter.HomePage)
-                },
-            ) {
-                Text(text = "Navigate To Home")
-            }
-        }
+        authGraph()
         composable(route = "home") {
             Button(
                 onClick = {
