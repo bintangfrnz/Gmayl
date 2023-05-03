@@ -40,9 +40,9 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.bintangfajarianto.gmayl.R
-import com.bintangfajarianto.gmayl.feature.auth.LoginAction
-import com.bintangfajarianto.gmayl.feature.auth.LoginViewModel
-import com.bintangfajarianto.gmayl.feature.auth.LoginViewState
+import com.bintangfajarianto.gmayl.feature.vm.auth.LoginAction
+import com.bintangfajarianto.gmayl.feature.vm.auth.LoginViewModel
+import com.bintangfajarianto.gmayl.feature.vm.auth.LoginViewState
 import com.bintangfajarianto.gmayl.theme.GmaylTheme
 import com.bintangfajarianto.gmayl.ui.base.BaseDialog
 import com.bintangfajarianto.gmayl.widget.GmaylPrimaryButton
