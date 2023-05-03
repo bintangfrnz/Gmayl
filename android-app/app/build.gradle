@@ -65,4 +65,8 @@ dependencies {
 
     // third party
     implementation 'io.github.aakira:napier:2.5.0'
+
+    // di
+    implementation 'org.kodein.di:kodein-di-framework-android-x:7.11.0'
+    implementation 'org.kodein.di:kodein-di-framework-compose:7.11.0'
 }
