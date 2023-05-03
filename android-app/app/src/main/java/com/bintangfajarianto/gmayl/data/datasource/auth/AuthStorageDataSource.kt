@@ -33,6 +33,12 @@ internal class AuthStorageDataSource(
     override suspend fun isLogin(): Boolean =
         secureStorage.getBoolean(AUTH_IS_LOGIN_KEY) ?: false
 
+    override suspend fun logout(): Boolean {
+        secureStorage.removeAll(true)
+        setLogin(false)
+        return true
+    }
+
     companion object {
         internal const val AUTH_IS_LOGIN_KEY = "authIsLoginKey"
         internal const val AUTH_LOGGED_USER_KEY = "authLoggedUserKey"

@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph
 import androidx.navigation.NavHostController
@@ -18,17 +19,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.bintangfajarianto.gmayl.core.RouteDestinationHandler
-import com.bintangfajarianto.gmayl.core.navigation.AuthRoute.LOGIN_PAGE
+import com.bintangfajarianto.gmayl.core.navigation.AuthRoute.LOGIN_ROUTE
 import com.bintangfajarianto.gmayl.core.navigation.authGraph
 import com.bintangfajarianto.gmayl.core.router.AppRouter
-import com.bintangfajarianto.gmayl.core.router.AuthRouter
 import com.bintangfajarianto.gmayl.core.router.mapToDestination
 import com.bintangfajarianto.gmayl.domain.usecase.auth.LoginStatusUseCase
+import com.bintangfajarianto.gmayl.domain.usecase.auth.LogoutUseCase
 import com.bintangfajarianto.gmayl.extension.navigate
 import com.bintangfajarianto.gmayl.theme.GmaylTheme
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.kodein.di.DI
 import org.kodein.di.DIAware
@@ -41,6 +43,7 @@ class MainActivity : ComponentActivity(), DIAware {
 
     override val di: DI by closestDI()
 
+    private val logoutUseCase: LogoutUseCase by instance()
     private val loginStatusUseCase: LoginStatusUseCase by instance()
     private val isLogin by lazy { runBlocking { loginStatusUseCase(Unit).isLogin } }
 
@@ -50,8 +53,13 @@ class MainActivity : ComponentActivity(), DIAware {
 
         setContent {
             withDI(di = di) {
+                val coroutineScope = rememberCoroutineScope()
+
                 GmaylTheme {
-                    GmaylApp(isLogin = isLogin)
+                    GmaylApp(
+                        isLogin = isLogin,
+                        logout = { coroutineScope.launch { logoutUseCase(Unit) } },
+                    )
                 }
             }
         }
@@ -59,7 +67,11 @@ class MainActivity : ComponentActivity(), DIAware {
 }
 
 @Composable
-fun GmaylApp(isLogin: Boolean, modifier: Modifier = Modifier) {
+fun GmaylApp(
+    isLogin: Boolean,
+    modifier: Modifier = Modifier,
+    logout: () -> Unit,
+) {
     val navController = rememberNavController()
 
     val routeDestinationHandler: RouteDestinationHandler by rememberInstance()
@@ -77,6 +89,8 @@ fun GmaylApp(isLogin: Boolean, modifier: Modifier = Modifier) {
         if (routeDestination is AppRouter.Logout) {
             // If the destination is logout,
             // Pop up to Login and remove session
+            logout()
+            navController.navigate(LOGIN_ROUTE) { popUpTo(id = 0) { inclusive = true } }
         }
 
         if (!route.isNullOrEmpty()) {
@@ -131,7 +145,7 @@ fun GmaylNavHost(
 
     val startDestination = when {
         isLogin -> "home"
-        else -> LOGIN_PAGE
+        else -> LOGIN_ROUTE
     }
 
     NavHost(
@@ -143,10 +157,10 @@ fun GmaylNavHost(
         composable(route = "home") {
             Button(
                 onClick = {
-                    routeDestinationHandler.sendDestination(AuthRouter.LoginPage)
+                    routeDestinationHandler.sendDestination(AppRouter.Logout)
                 },
             ) {
-                Text(text = "Back to Login")
+                Text(text = "Logout")
             }
         }
     }

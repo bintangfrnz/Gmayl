@@ -5,11 +5,11 @@ import androidx.navigation.compose.composable
 import com.bintangfajarianto.gmayl.ui.auth.LoginRoute
 
 fun NavGraphBuilder.authGraph() {
-    composable(AuthRoute.LOGIN_PAGE) {
+    composable(AuthRoute.LOGIN_ROUTE) {
         LoginRoute()
     }
 }
 
 object AuthRoute {
-    const val LOGIN_PAGE = "loginPage"
+    const val LOGIN_ROUTE = "loginRoute"
 }

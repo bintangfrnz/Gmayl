@@ -21,7 +21,7 @@ private fun AppRouter.mapAppRouter(): DestinationType =
 
 private fun AuthRouter.mapAuthRouter(): DestinationType =
     when (this) {
-        is AuthRouter.LoginPage -> AuthRoute.LOGIN_PAGE to null
+        is AuthRouter.LoginPage -> AuthRoute.LOGIN_ROUTE to null
     }
 
 private fun HomeRouter.mapHomeRouter(): DestinationType =

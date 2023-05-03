@@ -8,6 +8,7 @@ import com.bintangfajarianto.gmayl.di.constant.AppConstants
 import com.bintangfajarianto.gmayl.feature.di.FeatureAuthModule
 import com.bintangfajarianto.gmayl.di.module.RouteDestinationHandlerProviderModule
 import com.bintangfajarianto.gmayl.domain.di.auth.LoginStatusUseCaseModule
+import com.bintangfajarianto.gmayl.domain.di.auth.LogoutUseCaseModule
 import com.orhanobut.hawk.HawkBuilder
 import org.kodein.di.DI
 import org.kodein.di.DIAware
@@ -32,5 +33,6 @@ class GmaylApplication : Application(), DIAware {
 
             // Specific UseCase
             importOnce(LoginStatusUseCaseModule)
+            importOnce(LogoutUseCaseModule)
         }
 }
