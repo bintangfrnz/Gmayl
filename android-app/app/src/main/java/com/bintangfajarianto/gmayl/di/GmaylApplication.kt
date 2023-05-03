@@ -2,6 +2,7 @@ package com.bintangfajarianto.gmayl.di
 
 import android.app.Application
 import com.bintangfajarianto.gmayl.di.constant.AppConstants
+import com.bintangfajarianto.gmayl.di.module.AuthModule
 import com.bintangfajarianto.gmayl.di.module.RouteDestinationHandlerProviderModule
 import org.kodein.di.DI
 import org.kodein.di.DIAware
@@ -15,5 +16,8 @@ class GmaylApplication : Application(), DIAware {
             }
 
             importOnce(RouteDestinationHandlerProviderModule)
+
+            // Feature
+            importOnce(AuthModule)
         }
 }

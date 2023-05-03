@@ -2,6 +2,7 @@ package com.bintangfajarianto.gmayl.core.router
 
 import android.os.Bundle
 import com.bintangfajarianto.gmayl.core.RouteDestination
+import com.bintangfajarianto.gmayl.core.navigation.AuthRoute
 
 private typealias DestinationType = Pair<String?, Bundle?>
 
@@ -20,7 +21,7 @@ private fun AppRouter.mapAppRouter(): DestinationType =
 
 private fun AuthRouter.mapAuthRouter(): DestinationType =
     when (this) {
-        is AuthRouter.LoginPage -> "login" to null
+        is AuthRouter.LoginPage -> AuthRoute.LOGIN_PAGE to null
     }
 
 private fun HomeRouter.mapHomeRouter(): DestinationType =
