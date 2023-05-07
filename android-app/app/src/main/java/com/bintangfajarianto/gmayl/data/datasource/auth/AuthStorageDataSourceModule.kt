@@ -8,7 +8,7 @@ import org.kodein.di.bindSingleton
 import org.kodein.di.instance
 
 val AuthStorageDataSourceModule: DI.Module
-    get() = DI.Module(name = DataAuthConstant.AUTH_STORAGE_DATA_SOURCE_MODULE) {
+    get() = DI.Module(name = DataAuthConstant.STORAGE_DATA_SOURCE_MODULE) {
 
         bindSingleton<AuthStorageRepository> {
             AuthStorageDataSource(
