@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
     id 'kotlin-parcelize'
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.8.10'
 }
@@ -29,11 +30,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = JavaVersion.VERSION_17
         freeCompilerArgs = [
                 '-opt-in=androidx.compose.animation.ExperimentalAnimationApi',
                 '-opt-in=androidx.compose.material.ExperimentalMaterialApi',
@@ -70,14 +71,20 @@ dependencies {
     implementation 'androidx.compose.material3:material3'
     implementation 'androidx.navigation:navigation-runtime-ktx:2.5.3'
     implementation 'androidx.navigation:navigation-compose:2.5.3'
+    implementation 'androidx.room:room-runtime:2.5.1'
+    implementation 'androidx.room:room-ktx:2.5.1'
+    kapt 'androidx.room:room-compiler:2.5.1'
 
     // jetbrains
+    implementation 'org.jetbrains.kotlinx:kotlinx-datetime:0.4.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5'
 
     // third party
     implementation 'io.github.aakira:napier:2.5.0'
     implementation 'com.michael-bull.kotlin-result:kotlin-result:1.1.16'
+    implementation 'io.coil-kt:coil-compose:2.2.2'
 
     // store
     implementation 'com.orhanobut:hawk:2.0.1'
