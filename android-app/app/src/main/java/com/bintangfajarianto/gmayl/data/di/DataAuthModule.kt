@@ -12,7 +12,7 @@ import org.kodein.di.bindSingleton
 import org.kodein.di.instance
 
 val DataAuthModule: DI.Module
-    get() = DI.Module(name = DataAuthConstant.AUTH_MODULE) {
+    get() = DI.Module(name = DataAuthConstant.MODULE) {
         importOnce(AuthStorageDataSourceModule)
         importOnce(AuthNetworkDataSourceModule)
 

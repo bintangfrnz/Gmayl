@@ -6,10 +6,10 @@ import kotlinx.serialization.Serializable
 
 @Parcelize
 @Serializable
-class User(
-    private val name: String = "",
-    private val email: String = "",
-    private val avatarUrl: String = "",
+data class User(
+    val name: String = "",
+    val email: String = "",
+    val avatarUrl: String = "",
 ) : Parcelable {
     constructor(user: User) : this(
         name = user.name,

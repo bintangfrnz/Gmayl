@@ -9,6 +9,6 @@ suspend inline fun <T> networkCall(crossinline networkCall: suspend () -> T): Da
     try {
         Success(networkCall())
     } catch (ex: Throwable) {
-        Napier.e(ex.message.orEmpty(), ex, tag ="GRPC")
+        Napier.e(ex.message.orEmpty(), ex, tag ="Error")
         Error(ex)
     }
