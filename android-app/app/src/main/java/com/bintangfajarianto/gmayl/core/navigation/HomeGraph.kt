@@ -4,10 +4,11 @@ import androidx.compose.material3.Text
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.bintangfajarianto.gmayl.ui.home.HomeRoute
 
 fun NavGraphBuilder.homeGraph(navController: NavController) {
     composable(route = HomeRoutes.HOME_ROUTE) {
-        Text(text = "home")
+        HomeRoute()
     }
 
     composable(route = HomeRoutes.HOME_DETAIL_MAIL_ROUTE) {

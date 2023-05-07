@@ -9,4 +9,7 @@
     <string name="auth_password_hint">Enter your password</string>
     <string name="auth_hide_password">Hide Password</string>
     <string name="auth_show_password">Show Password</string>
+
+    <!-- Home -->
+    <string name="home_empty_mail">%s Empty</string>
 </resources>
