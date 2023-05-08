@@ -11,7 +11,7 @@ val LogoutUseCaseModule: DI.Module
     get() = DI.Module(name = DomainAuthConstant.LOGOUT_USE_CASE_MODULE) {
         importOnce(DataAuthModule)
 
-        bindSingleton<LogoutUseCase> {
+        bindSingleton {
             LogoutUseCase(repository = instance())
         }
     }

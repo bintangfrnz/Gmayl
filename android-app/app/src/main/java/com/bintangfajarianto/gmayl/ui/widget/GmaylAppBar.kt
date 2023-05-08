@@ -1,4 +1,4 @@
-package com.bintangfajarianto.gmayl.widget
+package com.bintangfajarianto.gmayl.ui.widget
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
@@ -20,9 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.bintangfajarianto.gmayl.R
 import com.bintangfajarianto.gmayl.theme.GmaylTheme
 
 @Composable
@@ -84,13 +82,5 @@ private fun GmaylNavigationIcon(
             tint = GmaylTheme.color.mist100,
             contentDescription = "navigation icon",
         )
-    }
-}
-
-@Preview
-@Composable
-private fun GmaylNavigationIconPreview() {
-    GmaylTheme {
-        GmaylNavigationIcon(navigationIcon = R.drawable.ic_arrow_left, onClick = { })
     }
 }

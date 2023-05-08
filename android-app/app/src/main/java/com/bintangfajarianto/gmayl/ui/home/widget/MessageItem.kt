@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.bintangfajarianto.gmayl.R
+import com.bintangfajarianto.gmayl.data.model.auth.User
 import com.bintangfajarianto.gmayl.data.model.home.InboxMail
 import com.bintangfajarianto.gmayl.data.model.home.Mail
 import com.bintangfajarianto.gmayl.extension.StringDateFormat
@@ -48,10 +49,9 @@ fun MessageItem(
         AsyncImage(
             modifier = Modifier
                 .size(32.dp)
-                .clip(CircleShape)
-                .background(color = GmaylTheme.color.primary50, shape = CircleShape),
+                .clip(CircleShape),
             model = ImageRequest.Builder(LocalContext.current)
-                .data(mail.avatarUrl)
+                .data(mail.sender.avatarUrl)
                 .crossfade(true)
                 .build(),
             placeholder = painterResource(id = R.drawable.ic_default_account),
@@ -68,7 +68,7 @@ fun MessageItem(
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = mail.sender,
+                text = mail.sender.name,
                 style = GmaylTheme.typography.contentMediumBold,
                 color = GmaylTheme.color.mist100,
                 maxLines = 1,
@@ -108,11 +108,10 @@ fun MessageItem(
 private fun PreviewMessageItem() {
     MessageItem(
         mail = InboxMail(
-            sender = "Bintang Fajarianto",
+            sender = User("Bintang Fajarianto"),
             subject = "[Tubes 3] Ini contoh subject aja",
             body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent interdum nibh at porttitor pharetra. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Maecenas mattis vitae nisl at convallis. Quisque rhoncus, felis id bibendum commodo, risus nulla faucibus magna, id eleifend eros ante non sapien. Quisque.",
             sentTime = "2023-04-05T13:15:30+07:00",
-            avatarUrl = "",
         ),
     ) {}
 }

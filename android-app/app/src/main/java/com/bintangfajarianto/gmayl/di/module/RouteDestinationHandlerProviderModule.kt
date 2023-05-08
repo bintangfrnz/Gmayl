@@ -6,7 +6,7 @@ import org.kodein.di.bindSingleton
 
 val RouteDestinationHandlerProviderModule: DI.Module
     get() = DI.Module(name = "RouteDestinationHandlerProviderModule") {
-        bindSingleton<RouteDestinationHandler> {
+        bindSingleton {
             RouteDestinationHandler()
         }
     }

@@ -1,7 +1,6 @@
 package com.bintangfajarianto.gmayl.data.datasource.home
 
 import com.bintangfajarianto.gmayl.data.constant.DataHomeConstant
-import com.bintangfajarianto.gmayl.data.database.MailDatabase
 import com.bintangfajarianto.gmayl.data.repository.home.HomeStorageRepository
 import com.bintangfajarianto.gmayl.di.module.MailDatabaseProviderModule
 import org.kodein.di.DI
@@ -14,7 +13,7 @@ val HomeStorageDataSourceModule: DI.Module
 
         bindSingleton<HomeStorageRepository> {
             HomeStorageDataSource(
-                mailDatabase = instance<MailDatabase>()
+                mailDatabase = instance()
             )
         }
     }

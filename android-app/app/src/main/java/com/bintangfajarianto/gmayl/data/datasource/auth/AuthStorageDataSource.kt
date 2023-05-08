@@ -33,10 +33,9 @@ internal class AuthStorageDataSource(
     override suspend fun isLogin(): Boolean =
         secureStorage.getBoolean(AUTH_IS_LOGIN_KEY) ?: false
 
-    override suspend fun logout(): Boolean {
+    override suspend fun logout() {
         secureStorage.removeAll(true)
         setLogin(false)
-        return true
     }
 
     companion object {

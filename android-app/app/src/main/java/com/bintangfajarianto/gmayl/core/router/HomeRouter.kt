@@ -6,5 +6,5 @@ import com.bintangfajarianto.gmayl.core.RouteDestination
 sealed class HomeRouter : RouteDestination() {
     object HomePage : HomeRouter()
     data class DetailMailPage(val mail: Parcelable) : HomeRouter()
-    object SendMailPage : HomeRouter()
+    data class SendMailPage(val user: Parcelable) : HomeRouter()
 }
