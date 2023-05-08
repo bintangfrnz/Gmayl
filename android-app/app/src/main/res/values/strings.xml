@@ -12,4 +12,22 @@
 
     <!-- Home -->
     <string name="home_empty_mail">%s Empty</string>
+
+    <!-- Send Mail -->
+    <string name="send_mail_title">Compose</string>
+    <string name="send_mail_from">From</string>
+    <string name="send_mail_to">To</string>
+    <string name="send_mail_subject">Subject</string>
+    <string name="send_mail_subject_hint">Your message subject</string>
+    <string name="send_mail_message">Message</string>
+    <string name="send_mail_message_hint">Enter your message here…</string>
+    <string name="send_mail_encrypt_message">Encrypt Your Message</string>
+    <string name="send_mail_digital_sign">Add Digital Sign</string>
+    <string name="send_mail_send">Send</string>
+
+    <string name="send_mail_symmetric_key_title">Symmetric Key</string>
+    <string name="send_mail_symmetric_key_hint">Enter your symmetric key</string>
+    <string name="send_mail_public_key_title">Public Key</string>
+    <string name="send_mail_public_key_hint">Enter your public key</string>
+    <string name="send_mail_save_key">Save Key</string>
 </resources>

@@ -34,7 +34,7 @@ class HomeViewModel(
         when (action) {
             HomeAction.InitData -> {
                 callEffect {
-                    delay(2000L)
+                    delay(500L)
                     fetchMails(tempSelectedDrawerItem)
                 }
                 HomeActionResult.ShowLoading
@@ -42,23 +42,24 @@ class HomeViewModel(
             HomeAction.OnClickBack -> HomeActionResult.ShowDialog
             HomeAction.OnClickLogout -> HomeActionResult.Logout
             is HomeAction.OnClickMailItem -> HomeActionResult.NavigateToDetailMail(action.mail)
-            HomeAction.OnClickSendMail -> HomeActionResult.NavigateToSendMail
+            is HomeAction.OnClickSendMail -> HomeActionResult.NavigateToSendMail(action.user)
             HomeAction.OnDismissDialog -> HomeActionResult.DismissDialog
             HomeAction.OnDismissSnackBar -> HomeActionResult.SetDataCondition(null)
             is HomeAction.OnReceiveDataMsgCondition -> HomeActionResult.SetDataCondition(action.dataMsgCondition)
             is HomeAction.OnSelectDrawerItem -> {
                 tempSelectedDrawerItem = action.drawerItem
-                handleOnAction(HomeAction.InitData)
+                callEffect {
+                    delay(50L)
+                    handleOnAction(HomeAction.InitData)
+                }
                 HomeActionResult.SetSelectedDrawerItem(tempSelectedDrawerItem)
             }
         }
 
     private suspend fun fetchMails(selectedDrawerItem: DrawerItemType): HomeActionResult =
         when (selectedDrawerItem) {
-            DrawerItemType.INBOX ->
-                HomeActionResult.SetMailItems(getInboxMailsUseCase.invoke(Unit).inboxMails)
-            DrawerItemType.SENT ->
-                HomeActionResult.SetMailItems(getSentMailsUseCase.invoke(Unit).sentMails)
+            DrawerItemType.INBOX -> HomeActionResult.SetMailItems(getInboxMailsUseCase.invoke(Unit).inboxMails)
+            DrawerItemType.SENT -> HomeActionResult.SetMailItems(getSentMailsUseCase.invoke(Unit).sentMails)
             else -> HomeActionResult.DismissDialog // Do Nothing
         }
 
@@ -96,7 +97,7 @@ class HomeViewModel(
     override fun navigateToReducer(actionResult: HomeActionResult): RouteDestination? =
         when (actionResult) {
             HomeActionResult.Logout -> AppRouter.Logout
-            HomeActionResult.NavigateToSendMail -> HomeRouter.SendMailPage
+            is HomeActionResult.NavigateToSendMail -> HomeRouter.SendMailPage(actionResult.user)
             is HomeActionResult.NavigateToDetailMail -> HomeRouter.DetailMailPage(actionResult.mail)
             else -> null
         }
@@ -121,7 +122,8 @@ class HomeViewModel(
     private fun HomeViewState.dataConditionReducer(actionResult: HomeActionResult): DataMessageCondition? {
         return when (actionResult) {
             is HomeActionResult.SetDataCondition -> actionResult.dataMsgCondition
-            else -> dataMsgCondition
+            HomeActionResult.DismissDialog -> dataMsgCondition
+            else -> null
         }
     }
 }

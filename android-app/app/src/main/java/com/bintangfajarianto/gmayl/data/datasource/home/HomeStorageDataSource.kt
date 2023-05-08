@@ -5,20 +5,16 @@ import com.bintangfajarianto.gmayl.data.model.home.InboxMail
 import com.bintangfajarianto.gmayl.data.model.home.Mail
 import com.bintangfajarianto.gmayl.data.model.home.SentMail
 import com.bintangfajarianto.gmayl.data.repository.home.HomeStorageRepository
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.flow.first
 
-@OptIn(FlowPreview::class)
 internal class HomeStorageDataSource(
     private val mailDatabase: MailDatabase,
 ) : HomeStorageRepository {
     override suspend fun getInboxMails(): List<InboxMail> =
-        mailDatabase.inboxMailDao.getInboxMails().flatMapConcat { it.asFlow() }.toList()
+        mailDatabase.inboxMailDao.getInboxMails().first()
 
     override suspend fun getSentMails(): List<SentMail> =
-        mailDatabase.sentMailDao.getSentMails().flatMapConcat { it.asFlow() }.toList()
+        mailDatabase.sentMailDao.getSentMails().first()
 
     override suspend fun sendMail(
         mail: Mail,
