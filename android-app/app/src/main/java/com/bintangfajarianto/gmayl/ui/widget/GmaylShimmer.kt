@@ -1,4 +1,4 @@
-package com.bintangfajarianto.gmayl.widget
+package com.bintangfajarianto.gmayl.ui.widget
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloat
