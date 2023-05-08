@@ -49,8 +49,7 @@ fun MessageItem(
         AsyncImage(
             modifier = Modifier
                 .size(32.dp)
-                .clip(CircleShape)
-                .background(color = GmaylTheme.color.primary50, shape = CircleShape),
+                .clip(CircleShape),
             model = ImageRequest.Builder(LocalContext.current)
                 .data(mail.sender.avatarUrl)
                 .crossfade(true)

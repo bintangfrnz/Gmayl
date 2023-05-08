@@ -32,5 +32,7 @@ private fun HomeRouter.mapHomeRouter(): DestinationType =
         is HomeRouter.DetailMailPage -> HomeRoutes.HOME_DETAIL_MAIL_ROUTE to bundleOf(
             HomeRoutes.HOME_DETAIL_MAIL_ARG to mail,
         )
-        is HomeRouter.SendMailPage -> HomeRoutes.HOME_SEND_MAIL_ROUTE to null
+        is HomeRouter.SendMailPage -> HomeRoutes.HOME_SEND_MAIL_ROUTE to bundleOf(
+            HomeRoutes.HOME_SEND_MAIL_ARG to user,
+        )
     }
