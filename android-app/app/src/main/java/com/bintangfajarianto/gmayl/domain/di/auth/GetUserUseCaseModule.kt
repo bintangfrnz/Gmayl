@@ -11,7 +11,7 @@ val GetUserUseCaseModule: DI.Module
     get() = DI.Module(name = DomainAuthConstant.GET_USER_USE_CASE_MODULE) {
         importOnce(DataAuthModule)
 
-        bindSingleton<GetUserUseCase> {
+        bindSingleton {
             GetUserUseCase(repository = instance())
         }
     }

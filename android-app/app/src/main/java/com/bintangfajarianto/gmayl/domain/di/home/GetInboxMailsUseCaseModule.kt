@@ -11,7 +11,7 @@ val GetInboxMailsUseCase: DI.Module
     get() = DI.Module(name = DomainHomeConstant.GET_INBOX_MAILS_USE_CASE) {
         importOnce(DataHomeModule)
 
-        bindSingleton<GetInboxMailsUseCase> {
+        bindSingleton {
             GetInboxMailsUseCase(repository = instance())
         }
     }

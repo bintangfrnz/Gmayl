@@ -11,7 +11,7 @@ val LoginStatusUseCaseModule: DI.Module
     get() = DI.Module(name = DomainAuthConstant.LOGIN_STATUS_USE_CASE_MODULE) {
         importOnce(DataAuthModule)
 
-        bindSingleton<LoginStatusUseCase> {
+        bindSingleton {
             LoginStatusUseCase(repository = instance())
         }
     }
