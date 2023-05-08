@@ -8,5 +8,5 @@ interface AuthStorageRepository {
     suspend fun getUser(): DataResult<User>
     suspend fun setLogin(isLogin: Boolean)
     suspend fun isLogin(): Boolean
-    suspend fun logout(): Boolean
+    suspend fun logout()
 }
