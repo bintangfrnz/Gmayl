@@ -79,6 +79,18 @@ abstract class BaseViewModel<VS : ViewState, A : Action, AR : ActionResult>(
         return effectJob
     }
 
+    protected suspend fun callMultipleEffects(callSuspends: List<suspend CoroutineScope.() -> AR>): List<Job> {
+        val jobList: MutableList<Job> = mutableListOf()
+        callSuspends.forEach {
+            callEffect(it).addTo(jobList)
+        }
+        return jobList
+    }
+
+    private fun Job.addTo(jobList: MutableList<Job>) {
+        jobList.add(this)
+    }
+
     private suspend fun handleActionResult(newActionResult: AR) {
         Napier.i("Action Result: $newActionResult", tag = this::class.simpleName)
         val newState = reducer(_stateFlow.value, newActionResult)

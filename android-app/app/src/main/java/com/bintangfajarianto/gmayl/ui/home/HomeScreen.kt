@@ -95,7 +95,7 @@ fun HomeRoute(
     navController.GetResult<DataMessageCondition>(
         key = HomeRoutes.HOME_ARG,
         onResult = {
-            viewModel.onAction(HomeAction.OnReceiveDataMsgCondition(it))
+            viewModel.onAction(HomeAction.InitData(it))
         },
     )
 
@@ -107,7 +107,7 @@ fun HomeRoute(
 
     LaunchedEffect(Unit) {
         if (!viewState.isInit) {
-            viewModel.onAction(HomeAction.InitData)
+            viewModel.onAction(HomeAction.InitData(null))
         }
     }
 
@@ -118,7 +118,11 @@ fun HomeRoute(
         drawerItems = enumValues<DrawerItemType>().toList().toPersistentList(),
         onSelectDrawerItem = { viewModel.onAction(HomeAction.OnSelectDrawerItem(it)) },
         onClickLogout = { viewModel.onAction(HomeAction.OnClickLogout) },
-        onClickMailItem = { viewModel.onAction(HomeAction.OnClickMailItem(it)) },
+        onClickMailItem = {
+            viewModel.onAction(
+                HomeAction.OnClickMailItem(mail = it, mailType = viewState.selectedDrawerItem)
+            )
+        },
         onClickSendMail = { viewModel.onAction(HomeAction.OnClickSendMail(user)) },
         onCloseApplication = {
             val activity = (context as? Activity)
@@ -149,21 +153,23 @@ private fun HomeScreen(
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(key1 = viewState.dataMsgCondition) {
-        val dataCondition = viewState.dataMsgCondition?.dataCondition ?: return@LaunchedEffect
-        val success = dataCondition == DataCondition.Success
+    LaunchedEffect(key1 = viewState.dataMsgCondition, key2 = viewState.loading) {
+        if (!viewState.loading) {
+            val dataCondition = viewState.dataMsgCondition?.dataCondition ?: return@LaunchedEffect
+            val success = dataCondition == DataCondition.Success
 
-        snackBarHostState.showSnackbar(
-            GmaylSnackBarVisuals(
-                message = viewState.dataMsgCondition.message,
-                alertType = when (success) {
-                    true -> AlertType.Positive
-                    else -> AlertType.Negative
-                },
-            ),
-        )
+            snackBarHostState.showSnackbar(
+                GmaylSnackBarVisuals(
+                    message = viewState.dataMsgCondition.message,
+                    alertType = when (success) {
+                        true -> AlertType.Positive
+                        else -> AlertType.Negative
+                    },
+                ),
+            )
 
-        onDismissSnackBar()
+            onDismissSnackBar()
+        }
     }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -364,18 +370,21 @@ private class HomeScreenParameterProvider :
                 mailItems = listOf(
                     InboxMail(
                         sender = User("Bintang F."),
+                        receiver = User(),
                         subject = "[Tugas 1] Ini contoh subject aja",
                         body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent interdum nibh at porttitor pharetra. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Maecenas mattis vitae nisl at convallis. Quisque rhoncus, felis id bibendum commodo, risus nulla faucibus magna, id eleifend eros ante non sapien. Quisque.",
                         sentTime = "2023-03-05T13:15:30+07:00",
                     ),
                     InboxMail(
                         sender = User("Bintang Fajar"),
+                        receiver = User(),
                         subject = "[Tugas 2] Ini contoh subject aja",
                         body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent interdum nibh at porttitor pharetra. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Maecenas mattis vitae nisl at convallis. Quisque rhoncus, felis id bibendum commodo, risus nulla faucibus magna, id eleifend eros ante non sapien. Quisque.",
                         sentTime = "2023-04-05T13:15:30+07:00",
                     ),
                     InboxMail(
                         sender = User("Bintang Fajarianto"),
+                        receiver = User(),
                         subject = "[Tugas 3] Ini contoh subject aja",
                         body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent interdum nibh at porttitor pharetra. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Maecenas mattis vitae nisl at convallis. Quisque rhoncus, felis id bibendum commodo, risus nulla faucibus magna, id eleifend eros ante non sapien. Quisque.",
                         sentTime = "2023-05-05T13:15:30+07:00",
@@ -387,12 +396,14 @@ private class HomeScreenParameterProvider :
                 mailItems = listOf(
                     SentMail(
                         sender = User("Admin"),
+                        receiver = User(),
                         subject = "[Tugas 1] Ini contoh subject aja",
                         body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent interdum nibh at porttitor pharetra. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Maecenas mattis vitae nisl at convallis. Quisque rhoncus, felis id bibendum commodo, risus nulla faucibus magna, id eleifend eros ante non sapien. Quisque.",
                         sentTime = "2023-03-05T13:15:30+07:00",
                     ),
                     SentMail(
                         sender = User("Admin"),
+                        receiver = User(),
                         subject = "[Tugas 2] Ini contoh subject aja",
                         body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent interdum nibh at porttitor pharetra. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Maecenas mattis vitae nisl at convallis. Quisque rhoncus, felis id bibendum commodo, risus nulla faucibus magna, id eleifend eros ante non sapien. Quisque.",
                         sentTime = "2023-04-05T13:15:30+07:00",

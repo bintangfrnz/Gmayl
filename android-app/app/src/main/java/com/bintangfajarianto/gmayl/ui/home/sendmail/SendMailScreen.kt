@@ -1,7 +1,5 @@
 package com.bintangfajarianto.gmayl.ui.home.sendmail
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,7 +24,6 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,7 +65,8 @@ import org.kodein.di.compose.rememberViewModel
 
 @Composable
 fun SendMailRoute(
-    user: User,
+    sender: User,
+    receiver: User,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
@@ -79,7 +77,7 @@ fun SendMailRoute(
 
     // Text Input
     var sendTo by remember {
-        mutableStateOf(TextFieldValue())
+        mutableStateOf(TextFieldValue(receiver.email))
     }
     var subject by remember {
         mutableStateOf(TextFieldValue())
@@ -102,10 +100,16 @@ fun SendMailRoute(
         mutableStateOf(TextFieldValue())
     }
 
+    LaunchedEffect(Unit) {
+        if (!viewState.isInitSendToEmail) {
+            viewModel.onAction(SendMailAction.InitSendToEmail(sendTo.text))
+        }
+    }
+
     SendMessageScreen(
         modifier = modifier,
         viewState = viewState,
-        user = user,
+        sender = sender,
         sendTo = sendTo,
         subject = subject,
         message = message,
@@ -184,23 +188,22 @@ fun SendMailRoute(
         },
         onClickSendMail = {
             keyboard?.hide()
-            navController.previousBackStackEntry?.savedStateHandle?.set(
-                HomeRoutes.HOME_ARG,
-                DataMessageCondition(
-                    dataCondition = DataCondition.Success,
-                    message = "Mail successfully sent",
-                ),
+            navController.getBackStackEntry(
+                HomeRoutes.HOME_ROUTE,
+            ).savedStateHandle[HomeRoutes.HOME_ARG] = DataMessageCondition(
+                dataCondition = DataCondition.Success,
+                message = "Mail successfully sent",
             )
 
             viewModel.onAction(
                 SendMailAction.OnClickSendMail(
                     mail = InboxMail(
-                        sender = user,
+                        sender = sender,
+                        receiver = User(email = sendTo.text),
                         subject = subject.text,
                         body = message.text,
                         sentTime = Clock.System.now().toString(),
                     ),
-                    toEmail = sendTo.text,
                     publicKey = publicKey.text,
                     symmetricKey = symmetricKey.text,
                 )
@@ -212,7 +215,7 @@ fun SendMailRoute(
 @Composable
 private fun SendMessageScreen(
     viewState: SendMailViewState,
-    user: User,
+    sender: User,
     sendTo: TextFieldValue,
     subject: TextFieldValue,
     message: TextFieldValue,
@@ -254,21 +257,6 @@ private fun SendMessageScreen(
 
         onDismissSnackBar()
     }
-
-    val scrollState = rememberScrollState()
-
-    val scrolling by remember {
-        derivedStateOf {
-            scrollState.value > 0
-        }
-    }
-
-    val appBarColor by animateColorAsState(
-        when {
-            scrolling -> GmaylTheme.color.primary70
-            else -> GmaylTheme.color.mist10
-        }
-    )
 
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -320,7 +308,7 @@ private fun SendMessageScreen(
             snackbarHost = { GmaylSnackBarHost(hostState = snackBarHostState) },
             topBar = {
                  GmaylAppBar(
-                     modifier = Modifier.background(color = appBarColor),
+                     modifier = Modifier.background(color = GmaylTheme.color.mist10),
                      navigationIcon = R.drawable.ic_arrow_left,
                      onClickNavigationIcon = onClickBack,
                      title = stringResource(id = R.string.send_mail_title),
@@ -333,11 +321,10 @@ private fun SendMessageScreen(
                     .background(color = GmaylTheme.color.mist10)
                     .padding(innerPadding),
                 viewState = viewState,
-                user = user,
+                sender = sender,
                 sendTo = sendTo,
                 subject = subject,
                 message = message,
-                scrollState = scrollState,
                 publicKey = publicKey,
                 symmetricKey = symmetricKey,
                 shouldEncrypt = shouldEncrypt,
@@ -358,11 +345,10 @@ private fun SendMessageScreen(
 @Composable
 private fun SendMessageScreenContent(
     viewState: SendMailViewState,
-    user: User,
+    sender: User,
     sendTo: TextFieldValue,
     subject: TextFieldValue,
     message: TextFieldValue,
-    scrollState: ScrollState,
     publicKey: TextFieldValue,
     symmetricKey: TextFieldValue,
     shouldEncrypt: Boolean,
@@ -377,11 +363,11 @@ private fun SendMessageScreenContent(
     modifier: Modifier = Modifier,
     onClickSendMail: () -> Unit,
 ) {
-    Column(modifier = modifier.verticalScroll(state = scrollState)) {
-        Spacer(modifier = Modifier.height(16.dp))
+    Column(modifier = modifier.verticalScroll(state = rememberScrollState())) {
+        Spacer(modifier = Modifier.height(8.dp))
         GmaylPrefixTextInput(
             modifier = Modifier.padding(horizontal = 16.dp),
-            value = TextFieldValue(user.email),
+            value = TextFieldValue(sender.email),
             enabled = false,
             prefix = stringResource(id = R.string.send_mail_from),
         ) {}
@@ -508,7 +494,7 @@ private fun SendMessageScreenContent(
 private fun PreviewSendMessageScreen() {
     SendMessageScreen(
         viewState = SendMailViewState(),
-        user = User(email = "admin@gmail.com"),
+        sender = User(email = "admin@gmail.com"),
         sendTo = TextFieldValue("someone@gmail.com"),
         subject = TextFieldValue(),
         message = TextFieldValue(),
