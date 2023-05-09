@@ -4,11 +4,13 @@ import com.bintangfajarianto.gmayl.data.database.MailDatabase
 import com.bintangfajarianto.gmayl.data.model.home.InboxMail
 import com.bintangfajarianto.gmayl.data.model.home.Mail
 import com.bintangfajarianto.gmayl.data.model.home.SentMail
+import com.bintangfajarianto.gmayl.data.python.BystarBlockCipher
 import com.bintangfajarianto.gmayl.data.repository.home.HomeStorageRepository
 import kotlinx.coroutines.flow.first
 
 internal class HomeStorageDataSource(
     private val mailDatabase: MailDatabase,
+    private val bystarBlockCipher: BystarBlockCipher,
 ) : HomeStorageRepository {
     override suspend fun getInboxMails(): List<InboxMail> =
         mailDatabase.inboxMailDao.getInboxMails().first()
@@ -21,11 +23,10 @@ internal class HomeStorageDataSource(
         publicKey: String,
         symmetricKey: String,
     ) {
-        var formattedBody = mail.body
+        var formattedBody = ""
 
-        // Temporary Encryption
         if (symmetricKey.isNotBlank()) {
-            formattedBody = TEMP_ENCRYPTED_TAG + formattedBody
+            formattedBody = bystarBlockCipher.encryptMessage(mail.body, symmetricKey)
         }
 
         // Temporary Sign
@@ -49,8 +50,10 @@ internal class HomeStorageDataSource(
         mailDatabase.sentMailDao.deleteMailFromSent(mail)
     }
 
+    override suspend fun decryptMail(hexBody: String, symmetricKey: String): String =
+        bystarBlockCipher.decryptMessage(hexBody, symmetricKey)
+
     companion object {
-        private const val TEMP_ENCRYPTED_TAG = "[encrypted] "
         private const val TEMP_DIGITAL_SIGNATURE_OPEN_TAG = "\n\n<ds>\n"
         private const val TEMP_DIGITAL_SIGNATURE_CLOSE_TAG = "\n</ds>"
     }
