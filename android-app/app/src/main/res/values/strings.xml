@@ -30,4 +30,10 @@
     <string name="send_mail_public_key_title">Public Key</string>
     <string name="send_mail_public_key_hint">Enter your public key</string>
     <string name="send_mail_save_key">Save Key</string>
+
+    <!-- Mail Detail -->
+    <string name="mail_detail_to_email">to %s</string>
+    <string name="mail_detail_from">From</string>
+    <string name="mail_detail_to">To</string>
+    <string name="mail_detail_date">Date</string>
 </resources>
