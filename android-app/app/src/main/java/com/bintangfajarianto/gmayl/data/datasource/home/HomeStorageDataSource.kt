@@ -18,7 +18,6 @@ internal class HomeStorageDataSource(
 
     override suspend fun sendMail(
         mail: Mail,
-        toEmail: String,
         publicKey: String,
         symmetricKey: String,
     ) {
@@ -36,7 +35,7 @@ internal class HomeStorageDataSource(
 
         mailDatabase.sentMailDao.addMailToSent(SentMail(mail).copy(body = formattedBody))
 
-        val isReceive = mail.sender.email == toEmail
+        val isReceive = mail.sender.email == mail.receiver.email
         if (isReceive) {
             mailDatabase.inboxMailDao.addMailToInbox(InboxMail(mail).copy(body = formattedBody))
         }

@@ -23,12 +23,13 @@ class SendMailViewModel(
 ) {
     override suspend fun handleOnAction(action: SendMailAction): SendMailActionResult =
         when (action) {
+            is SendMailAction.InitSendToEmail -> handleInputSendToEmail(action.email)
             SendMailAction.OnClickEncryptMail -> SendMailActionResult.ShowEncryptionDialog
             SendMailAction.OnClickSignMail -> SendMailActionResult.ShowDigitalSignDialog
             is SendMailAction.OnClickSendMail -> {
                 callEffect {
                     delay(1500L)
-                    sendMail(action.mail, action.toEmail, action.publicKey, action.symmetricKey)
+                    sendMail(action.mail, action.publicKey, action.symmetricKey)
                 }
                 SendMailActionResult.ShowLoading
             }
@@ -38,8 +39,8 @@ class SendMailViewModel(
             is SendMailAction.OnReceiveDataCondition -> SendMailActionResult.SetDataCondition(action.dataMsgCondition)
         }
 
-    private suspend fun sendMail(mail: Mail, toEmail: String, publicKey: String, symmetricKey: String): SendMailActionResult {
-        sendMailUseCase.invoke(SendMailUseCase.Params(mail, toEmail, publicKey, symmetricKey))
+    private suspend fun sendMail(mail: Mail, publicKey: String, symmetricKey: String): SendMailActionResult {
+        sendMailUseCase.invoke(SendMailUseCase.Params(mail, publicKey, symmetricKey))
         return SendMailActionResult.NavigateToHome
     }
 
@@ -57,6 +58,7 @@ class SendMailViewModel(
         oldState: SendMailViewState,
         actionResult: SendMailActionResult,
     ): SendMailViewState = SendMailViewState(
+        isInitSendToEmail = true,
         errorMessageSendToEmail = oldState.errorMessageSendToEmailReducer(actionResult),
         validSendToEmail = oldState.validSentToEmailReducer(actionResult),
         loading = loadingReducer(actionResult),

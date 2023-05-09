@@ -1,22 +1,32 @@
 package com.bintangfajarianto.gmayl.extension
 
+import java.util.*
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
-val MONTHS = listOf(
-    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-    "Juli", "Agustus", "September", "Oktober", "November", "Desember",
-)
-
 enum class StringDateFormat {
     MESSAGE_ITEM_DATE,
+    FULL_DATE,
 }
 
 fun LocalDate.format(format: StringDateFormat): String =
     when (format) {
-        StringDateFormat.MESSAGE_ITEM_DATE -> "${MONTHS[monthNumber - 1].take(3)} ${year.toString().takeLast(2)}"
+        StringDateFormat.MESSAGE_ITEM_DATE -> "${month.capitalize().take(3)} $dayOfMonth"
+        StringDateFormat.FULL_DATE -> "${dayOfWeek.capitalize()}, ${month.capitalize()} $dayOfMonth, $year"
+    }
+
+private fun Month.capitalize(): String =
+    this.toString().lowercase().replaceFirstChar {
+        if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+    }
+
+private fun DayOfWeek.capitalize(): String =
+    this.toString().lowercase().replaceFirstChar {
+        if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
     }
 
 fun Instant.getLocalDate(): LocalDate = toLocalDateTime(TIME_ZONE_ID).date

@@ -8,6 +8,7 @@ import com.bintangfajarianto.gmayl.data.model.general.DataMessageCondition
 import com.bintangfajarianto.gmayl.data.model.home.Mail
 
 data class SendMailViewState(
+    val isInitSendToEmail: Boolean = false,
     val errorMessageSendToEmail: String? = null,
     val validSendToEmail: Boolean = false,
     val loading: Boolean = false,
@@ -18,11 +19,11 @@ data class SendMailViewState(
 ) : ViewState
 
 sealed class SendMailAction : Action {
+    data class InitSendToEmail(val email: String) : SendMailAction()
     object OnClickEncryptMail : SendMailAction()
     object OnClickSignMail : SendMailAction()
     data class OnClickSendMail(
         val mail: Mail,
-        val toEmail: String,
         val publicKey: String,
         val symmetricKey: String,
     ) : SendMailAction()

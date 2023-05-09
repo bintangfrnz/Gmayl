@@ -7,6 +7,7 @@ import kotlinx.datetime.LocalDate
 interface Mail : Parcelable {
     val id: Int?
     val sender: User
+    val receiver: User
     val subject: String
     val body: String
     val sentTime: String
