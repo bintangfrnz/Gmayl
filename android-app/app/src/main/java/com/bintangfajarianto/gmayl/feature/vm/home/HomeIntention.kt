@@ -21,14 +21,13 @@ data class HomeViewState(
 ) : ViewState
 
 sealed class HomeAction : Action {
-    object InitData : HomeAction()
+    data class InitData(val dataMsgCondition: DataMessageCondition?) : HomeAction()
     object OnClickBack : HomeAction()
     object OnClickLogout : HomeAction()
-    data class OnClickMailItem(val mail: Mail) : HomeAction()
+    data class OnClickMailItem(val mail: Mail, val mailType: DrawerItemType) : HomeAction()
     data class OnClickSendMail(val user: User) : HomeAction()
     object OnDismissDialog : HomeAction()
     object OnDismissSnackBar : HomeAction()
-    data class OnReceiveDataMsgCondition(val dataMsgCondition: DataMessageCondition?) : HomeAction()
     data class OnSelectDrawerItem(val drawerItem: DrawerItemType) : HomeAction()
 }
 
@@ -36,7 +35,7 @@ sealed class HomeActionResult : ActionResult {
     object DismissDialog : HomeActionResult()
     object Logout : HomeActionResult()
     data class NavigateToSendMail(val user: User) : HomeActionResult()
-    data class NavigateToDetailMail(val mail: Mail) : HomeActionResult()
+    data class NavigateToDetailMail(val mail: Mail, val mailType: DrawerItemType) : HomeActionResult()
     data class SetDataCondition(val dataMsgCondition: DataMessageCondition?) : HomeActionResult()
     data class SetMailItems(val mailItems: List<Mail>) : HomeActionResult()
     data class SetSelectedDrawerItem(val drawerItem: DrawerItemType) : HomeActionResult()

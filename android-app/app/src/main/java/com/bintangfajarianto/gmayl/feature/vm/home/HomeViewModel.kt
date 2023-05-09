@@ -8,6 +8,7 @@ import com.bintangfajarianto.gmayl.core.router.HomeRouter
 import com.bintangfajarianto.gmayl.data.model.auth.User
 import com.bintangfajarianto.gmayl.data.model.general.DataMessageCondition
 import com.bintangfajarianto.gmayl.data.model.general.DialogData
+import com.bintangfajarianto.gmayl.data.model.general.DialogImageType
 import com.bintangfajarianto.gmayl.data.model.home.DrawerItemType
 import com.bintangfajarianto.gmayl.data.model.home.Mail
 import com.bintangfajarianto.gmayl.domain.usecase.auth.GetUserUseCase
@@ -32,25 +33,32 @@ class HomeViewModel(
 
     override suspend fun handleOnAction(action: HomeAction): HomeActionResult =
         when (action) {
-            HomeAction.InitData -> {
-                callEffect {
-                    delay(500L)
-                    fetchMails(tempSelectedDrawerItem)
-                }
+            is HomeAction.InitData -> {
+                callMultipleEffects(
+                    listOf(
+                        {
+                            delay(50L)
+                            HomeActionResult.SetDataCondition(action.dataMsgCondition)
+                        },
+                        {
+                            delay(500L)
+                            fetchMails(tempSelectedDrawerItem)
+                        }
+                    )
+                )
                 HomeActionResult.ShowLoading
             }
             HomeAction.OnClickBack -> HomeActionResult.ShowDialog
             HomeAction.OnClickLogout -> HomeActionResult.Logout
-            is HomeAction.OnClickMailItem -> HomeActionResult.NavigateToDetailMail(action.mail)
+            is HomeAction.OnClickMailItem -> HomeActionResult.NavigateToDetailMail(action.mail, action.mailType)
             is HomeAction.OnClickSendMail -> HomeActionResult.NavigateToSendMail(action.user)
             HomeAction.OnDismissDialog -> HomeActionResult.DismissDialog
             HomeAction.OnDismissSnackBar -> HomeActionResult.SetDataCondition(null)
-            is HomeAction.OnReceiveDataMsgCondition -> HomeActionResult.SetDataCondition(action.dataMsgCondition)
             is HomeAction.OnSelectDrawerItem -> {
                 tempSelectedDrawerItem = action.drawerItem
                 callEffect {
                     delay(50L)
-                    handleOnAction(HomeAction.InitData)
+                    handleOnAction(HomeAction.InitData(null))
                 }
                 HomeActionResult.SetSelectedDrawerItem(tempSelectedDrawerItem)
             }
@@ -77,7 +85,7 @@ class HomeViewModel(
         mailItems = oldState.mailItemsReducer(actionResult),
         selectedDrawerItem = oldState.selectedDrawerItemReducer(actionResult),
         navigateTo = shouldNavigateTo(actionResult),
-        loading = loadingReducer(actionResult),
+        loading = oldState.loadingReducer(actionResult),
         dialogData = dialogDataReducer(actionResult),
         dataMsgCondition = oldState.dataConditionReducer(actionResult),
     )
@@ -98,19 +106,21 @@ class HomeViewModel(
         when (actionResult) {
             HomeActionResult.Logout -> AppRouter.Logout
             is HomeActionResult.NavigateToSendMail -> HomeRouter.SendMailPage(actionResult.user)
-            is HomeActionResult.NavigateToDetailMail -> HomeRouter.DetailMailPage(actionResult.mail)
+            is HomeActionResult.NavigateToDetailMail -> HomeRouter.DetailMailPage(actionResult.mail, actionResult.mailType)
             else -> null
         }
 
-    private fun loadingReducer(actionResult: HomeActionResult): Boolean =
+    private fun HomeViewState.loadingReducer(actionResult: HomeActionResult): Boolean =
         when (actionResult) {
             HomeActionResult.ShowLoading -> true
-            else -> false
+            is HomeActionResult.SetMailItems -> false
+            else -> loading
         }
 
     private fun dialogDataReducer(actionResult: HomeActionResult): DialogData? =
         when (actionResult) {
             HomeActionResult.ShowDialog -> DialogData(
+                imageType = DialogImageType.QUESTION,
                 titleText = "Exit App",
                 descriptionText = "Do you really want to quit <b>Gmayl</b>?",
                 positiveButtonText = "Yes, Quit",
@@ -122,6 +132,7 @@ class HomeViewModel(
     private fun HomeViewState.dataConditionReducer(actionResult: HomeActionResult): DataMessageCondition? {
         return when (actionResult) {
             is HomeActionResult.SetDataCondition -> actionResult.dataMsgCondition
+            is HomeActionResult.SetMailItems,
             HomeActionResult.DismissDialog -> dataMsgCondition
             else -> null
         }
