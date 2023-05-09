@@ -7,3 +7,6 @@ fun String.isEmailFormatValid(): Boolean =
 
 fun String.isPasswordLengthValid(): Boolean =
     this.length in 8..100
+
+fun String.isSymmetricKeyLengthValid(): Boolean =
+    this.length == 16

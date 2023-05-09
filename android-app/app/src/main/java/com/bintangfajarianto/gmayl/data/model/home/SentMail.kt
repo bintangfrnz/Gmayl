@@ -17,6 +17,7 @@ data class SentMail(
     override val subject: String,
     override val body: String,
     override val sentTime: String,
+    override val encrypted: Boolean,
     @PrimaryKey(autoGenerate = true)
     override val id: Int? = null,
 ) : Mail {
@@ -29,6 +30,7 @@ data class SentMail(
         subject = mail.subject,
         body = mail.body,
         sentTime = mail.sentTime,
+        encrypted = mail.encrypted,
         id = mail.id
     )
 }

@@ -117,17 +117,14 @@ fun SendMailRoute(
         publicKey = publicKey,
         shouldEncrypt = shouldEncrypt,
         shouldAddDigitalSign = shouldAddDigitalSign,
+        onChangeShouldEncrypt = { shouldEncrypt = it },
+        onChangeShouldAddDigitalSign = { shouldAddDigitalSign = it },
         onClickBack = { navController.popBackStack() },
-        onDismissDialog = { viewModel.onAction(SendMailAction.OnDismissDialog) },
-        onDismissSnackBar = { viewModel.onAction(SendMailAction.OnDismissSnackBar) },
         onClickEncryptMail = { viewModel.onAction(SendMailAction.OnClickEncryptMail) },
         onClickSignMail = { viewModel.onAction(SendMailAction.OnClickSignMail) },
-        onChangeShouldEncrypt = {
-            shouldEncrypt = it
-        },
-        onChangeShouldAddDigitalSign = {
-            shouldAddDigitalSign = it
-        },
+        onDismissDialog = { viewModel.onAction(SendMailAction.OnDismissDialog) },
+        onDismissSnackBar = { viewModel.onAction(SendMailAction.OnDismissSnackBar) },
+        onInputSymmetricKey = { viewModel.onAction(SendMailAction.OnInputSymmetricKey(it)) },
         onSavePublicKey = {
             publicKey = it
             when {
@@ -180,12 +177,8 @@ fun SendMailRoute(
             sendTo = it
             viewModel.onAction(SendMailAction.OnInputSendToEmail(sendTo.text))
         },
-        updateSubject = {
-            subject = it
-        },
-        updateMessage = {
-            message = it
-        },
+        updateSubject = { subject = it },
+        updateMessage = { message = it },
         onClickSendMail = {
             keyboard?.hide()
             navController.getBackStackEntry(
@@ -203,6 +196,7 @@ fun SendMailRoute(
                         subject = subject.text,
                         body = message.text,
                         sentTime = Clock.System.now().toString(),
+                        encrypted = shouldEncrypt,
                     ),
                     publicKey = publicKey.text,
                     symmetricKey = symmetricKey.text,
@@ -223,13 +217,14 @@ private fun SendMessageScreen(
     symmetricKey: TextFieldValue,
     shouldEncrypt: Boolean,
     shouldAddDigitalSign: Boolean,
-    onClickBack: () -> Unit,
-    onDismissDialog: () -> Unit,
-    onDismissSnackBar: () -> Unit,
-    onClickEncryptMail: () -> Unit,
-    onClickSignMail: () -> Unit,
     onChangeShouldEncrypt: (Boolean) -> Unit,
     onChangeShouldAddDigitalSign: (Boolean) -> Unit,
+    onClickBack: () -> Unit,
+    onClickEncryptMail: () -> Unit,
+    onClickSignMail: () -> Unit,
+    onDismissDialog: () -> Unit,
+    onDismissSnackBar: () -> Unit,
+    onInputSymmetricKey: (String) -> Unit,
     onSavePublicKey: (TextFieldValue) -> Unit,
     onSaveSymmetricKey: (TextFieldValue) -> Unit,
     updateSentTo: (TextFieldValue) -> Unit,
@@ -286,6 +281,9 @@ private fun SendMessageScreen(
                     key = symmetricKey,
                     title = stringResource(id = R.string.send_mail_symmetric_key_title),
                     hint = stringResource(id = R.string.send_mail_symmetric_key_hint),
+                    errorMessage = viewState.errorMessageSymmetricKey,
+                    enabled = viewState.validSymmetricKey,
+                    onChangeKey = onInputSymmetricKey,
                     onClickSave = {
                         coroutineScope.launch { sheetState.hide() }
                         onSaveSymmetricKey(it)
@@ -295,6 +293,7 @@ private fun SendMessageScreen(
                     key = publicKey,
                     title = stringResource(id = R.string.send_mail_public_key_title),
                     hint = stringResource(id = R.string.send_mail_public_key_hint),
+                    onChangeKey = {},
                     onClickSave = {
                         coroutineScope.launch { sheetState.hide() }
                         onSavePublicKey(it)
@@ -329,10 +328,10 @@ private fun SendMessageScreen(
                 symmetricKey = symmetricKey,
                 shouldEncrypt = shouldEncrypt,
                 shouldAddDigitalSign = shouldAddDigitalSign,
-                onClickEncryptMail = onClickEncryptMail,
-                onClickSignMail = onClickSignMail,
                 onChangeShouldEncrypt = onChangeShouldEncrypt,
                 onChangeShouldAddDigitalSign = onChangeShouldAddDigitalSign,
+                onClickEncryptMail = onClickEncryptMail,
+                onClickSignMail = onClickSignMail,
                 updateSentTo = updateSentTo,
                 updateSubject = updateSubject,
                 updateMessage = updateMessage,
@@ -353,10 +352,10 @@ private fun SendMessageScreenContent(
     symmetricKey: TextFieldValue,
     shouldEncrypt: Boolean,
     shouldAddDigitalSign: Boolean,
-    onClickEncryptMail: () -> Unit,
-    onClickSignMail: () -> Unit,
     onChangeShouldEncrypt: (Boolean) -> Unit,
     onChangeShouldAddDigitalSign: (Boolean) -> Unit,
+    onClickEncryptMail: () -> Unit,
+    onClickSignMail: () -> Unit,
     updateSentTo: (TextFieldValue) -> Unit,
     updateSubject: (TextFieldValue) -> Unit,
     updateMessage: (TextFieldValue) -> Unit,
@@ -507,6 +506,7 @@ private fun PreviewSendMessageScreen() {
         onDismissSnackBar = {},
         onClickEncryptMail = {},
         onClickSignMail = {},
+        onInputSymmetricKey = {},
         onChangeShouldEncrypt = {},
         onChangeShouldAddDigitalSign = {},
         onSavePublicKey = {},
