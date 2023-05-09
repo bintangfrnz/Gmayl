@@ -13,6 +13,7 @@ import kotlinx.parcelize.Parcelize
 @Entity
 data class InboxMail(
     override val sender: User,
+    override val receiver: User,
     override val subject: String,
     override val body: String,
     override val sentTime: String,
@@ -24,6 +25,7 @@ data class InboxMail(
 
     constructor(mail: Mail): this(
         sender = mail.sender,
+        receiver = mail.receiver,
         subject = mail.subject,
         body = mail.body,
         sentTime = mail.sentTime,
