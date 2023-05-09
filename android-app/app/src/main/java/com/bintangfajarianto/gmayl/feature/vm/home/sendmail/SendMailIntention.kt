@@ -10,7 +10,9 @@ import com.bintangfajarianto.gmayl.data.model.home.Mail
 data class SendMailViewState(
     val isInitSendToEmail: Boolean = false,
     val errorMessageSendToEmail: String? = null,
+    val errorMessageSymmetricKey: String? = null,
     val validSendToEmail: Boolean = false,
+    val validSymmetricKey: Boolean = false,
     val loading: Boolean = false,
     val navigateTo: RouteDestination? = null,
     val showEncryptionDialog: Boolean = false,
@@ -29,10 +31,11 @@ sealed class SendMailAction : Action {
     ) : SendMailAction()
     object OnDismissDialog : SendMailAction()
     object OnDismissSnackBar : SendMailAction()
+    data class OnInputSendToEmail(val email: String) : SendMailAction()
+    data class OnInputSymmetricKey(val key: String) : SendMailAction()
     data class OnReceiveDataCondition(
         val dataMsgCondition: DataMessageCondition?,
     ) : SendMailAction()
-    data class OnInputSendToEmail(val email: String) : SendMailAction()
 }
 
 sealed class SendMailActionResult : ActionResult {
@@ -42,7 +45,9 @@ sealed class SendMailActionResult : ActionResult {
         val dataMsgCondition: DataMessageCondition?,
     ) : SendMailActionResult()
     data class SetErrorMessageSendToEmail(val errorMsg: String?) : SendMailActionResult()
-    data class SetValidEmail(val isValid: Boolean) : SendMailActionResult()
+    data class SetErrorMessageSymmetricKey(val errorMsg: String?) : SendMailActionResult()
+    data class SetValidSendToEmail(val isValid: Boolean) : SendMailActionResult()
+    data class SetValidSymmetricKey(val isValid: Boolean) : SendMailActionResult()
     object ShowEncryptionDialog : SendMailActionResult()
     object ShowDigitalSignDialog : SendMailActionResult()
     object ShowLoading : SendMailActionResult()

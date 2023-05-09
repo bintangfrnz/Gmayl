@@ -25,10 +25,13 @@ import com.bintangfajarianto.gmayl.ui.widget.GmaylTextInput
 @Composable
 fun InputKeyDialog(
     key: TextFieldValue,
+    onChangeKey: (String) -> Unit,
     modifier: Modifier = Modifier,
     title: String = "",
     hint: String = "",
+    errorMessage: String? = null,
     loading: Boolean = false,
+    enabled: Boolean = true,
     onClickSave: (TextFieldValue) -> Unit,
 ) {
     var newKey by remember {
@@ -46,15 +49,20 @@ fun InputKeyDialog(
         Spacer(modifier = Modifier.height(24.dp))
         GmaylTextInput(
             value = newKey,
-            onValueChange = { newKey = it },
+            onValueChange = {
+                newKey = it
+                onChangeKey(newKey.text)
+            },
             title = title,
             hint = hint,
+            enabled = !loading,
+            errorMessage = errorMessage,
         )
         Spacer(modifier = Modifier.height(16.dp))
         GmaylPrimaryButton(
             label = stringResource(id = R.string.send_mail_save_key),
             loading = loading,
-            enabled = newKey != key,
+            enabled = newKey != key && enabled,
             onClick = { onClickSave(newKey) },
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -68,6 +76,7 @@ private fun PreviewInputKeyDialog() {
         key = TextFieldValue("bintangfrnz_13519138"),
         title = stringResource(id = R.string.send_mail_symmetric_key_title),
         hint = stringResource(id = R.string.send_mail_symmetric_key_hint),
+        onChangeKey = {},
         onClickSave = {},
     )
 }
