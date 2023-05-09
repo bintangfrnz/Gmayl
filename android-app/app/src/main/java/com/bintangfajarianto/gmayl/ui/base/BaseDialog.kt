@@ -29,8 +29,8 @@ import com.bintangfajarianto.gmayl.data.model.general.DialogData
 import com.bintangfajarianto.gmayl.data.model.general.DialogImageType
 import com.bintangfajarianto.gmayl.theme.GmaylTheme
 import com.bintangfajarianto.gmayl.utils.parseHtmlText
-import com.bintangfajarianto.gmayl.widget.GmaylPrimaryButton
-import com.bintangfajarianto.gmayl.widget.GmaylSecondaryButton
+import com.bintangfajarianto.gmayl.ui.widget.GmaylPrimaryButton
+import com.bintangfajarianto.gmayl.ui.widget.GmaylSecondaryButton
 
 @Composable
 fun BaseDialog(
@@ -140,7 +140,7 @@ private fun PreviewBaseDialog(
 }
 
 @Composable
-private fun HandlerBar(modifier: Modifier = Modifier) {
+fun HandlerBar(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .height(6.dp)

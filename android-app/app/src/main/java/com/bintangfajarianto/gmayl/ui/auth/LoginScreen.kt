@@ -45,8 +45,8 @@ import com.bintangfajarianto.gmayl.feature.vm.auth.LoginViewModel
 import com.bintangfajarianto.gmayl.feature.vm.auth.LoginViewState
 import com.bintangfajarianto.gmayl.theme.GmaylTheme
 import com.bintangfajarianto.gmayl.ui.base.BaseDialog
-import com.bintangfajarianto.gmayl.widget.GmaylPrimaryButton
-import com.bintangfajarianto.gmayl.widget.GmaylTextInput
+import com.bintangfajarianto.gmayl.ui.widget.GmaylPrimaryButton
+import com.bintangfajarianto.gmayl.ui.widget.GmaylTextInput
 import kotlinx.coroutines.launch
 import org.kodein.di.compose.rememberViewModel
 

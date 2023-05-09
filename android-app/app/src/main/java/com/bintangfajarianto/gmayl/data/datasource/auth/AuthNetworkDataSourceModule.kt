@@ -6,7 +6,7 @@ import org.kodein.di.DI
 import org.kodein.di.bindSingleton
 
 val AuthNetworkDataSourceModule: DI.Module
-    get() = DI.Module(name = DataAuthConstant.AUTH_NETWORK_DATA_SOURCE_MODULE) {
+    get() = DI.Module(name = DataAuthConstant.NETWORK_DATA_SOURCE_MODULE) {
 
         bindSingleton<AuthNetworkRepository> {
             AuthNetworkDataSource()

@@ -1,4 +1,4 @@
-package com.bintangfajarianto.gmayl.widget
+package com.bintangfajarianto.gmayl.ui.widget
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
