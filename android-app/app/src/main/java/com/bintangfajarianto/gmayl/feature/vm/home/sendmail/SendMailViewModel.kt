@@ -6,6 +6,8 @@ import com.bintangfajarianto.gmayl.core.RouteDestinationHandler
 import com.bintangfajarianto.gmayl.core.router.HomeRouter
 import com.bintangfajarianto.gmayl.core.validator.EmailValidator
 import com.bintangfajarianto.gmayl.core.validator.EmailValidatorActionResult
+import com.bintangfajarianto.gmayl.core.validator.SymmetricKeyValidator
+import com.bintangfajarianto.gmayl.core.validator.SymmetricKeyValidatorActionResult
 import com.bintangfajarianto.gmayl.data.model.general.DataMessageCondition
 import com.bintangfajarianto.gmayl.data.model.home.Mail
 import com.bintangfajarianto.gmayl.domain.usecase.home.SendMailUseCase
@@ -28,7 +30,7 @@ class SendMailViewModel(
             SendMailAction.OnClickSignMail -> SendMailActionResult.ShowDigitalSignDialog
             is SendMailAction.OnClickSendMail -> {
                 callEffect {
-                    delay(1500L)
+                    delay(1000L)
                     sendMail(action.mail, action.publicKey, action.symmetricKey)
                 }
                 SendMailActionResult.ShowLoading
@@ -36,6 +38,7 @@ class SendMailViewModel(
             SendMailAction.OnDismissDialog -> SendMailActionResult.DismissDialog
             SendMailAction.OnDismissSnackBar -> SendMailActionResult.SetDataCondition(null)
             is SendMailAction.OnInputSendToEmail -> handleInputSendToEmail(action.email)
+            is SendMailAction.OnInputSymmetricKey -> handleInputSymmetricKey(key = action.key)
             is SendMailAction.OnReceiveDataCondition -> SendMailActionResult.SetDataCondition(action.dataMsgCondition)
         }
 
@@ -47,11 +50,21 @@ class SendMailViewModel(
     private fun handleInputSendToEmail(email: String): SendMailActionResult =
         when (EmailValidator.validate(email)) {
             EmailValidatorActionResult.Valid ->
-                SendMailActionResult.SetValidEmail(isValid = true)
+                SendMailActionResult.SetValidSendToEmail(isValid = true)
             EmailValidatorActionResult.InvalidFormat ->
                 SendMailActionResult.SetErrorMessageSendToEmail(errorMsg = "Email format is invalid")
             EmailValidatorActionResult.Blank ->
                 SendMailActionResult.SetErrorMessageSendToEmail(errorMsg = null)
+        }
+
+    private fun handleInputSymmetricKey(key: String): SendMailActionResult =
+        when (SymmetricKeyValidator.validate(key)) {
+            SymmetricKeyValidatorActionResult.Valid ->
+                SendMailActionResult.SetValidSymmetricKey(isValid = true)
+            SymmetricKeyValidatorActionResult.InvalidLength ->
+                SendMailActionResult.SetErrorMessageSymmetricKey(errorMsg = "Symmetric key must be 16 characters")
+            SymmetricKeyValidatorActionResult.Blank ->
+                SendMailActionResult.SetErrorMessageSymmetricKey(errorMsg = null)
         }
 
     override suspend fun reducer(
@@ -60,7 +73,9 @@ class SendMailViewModel(
     ): SendMailViewState = SendMailViewState(
         isInitSendToEmail = true,
         errorMessageSendToEmail = oldState.errorMessageSendToEmailReducer(actionResult),
+        errorMessageSymmetricKey = oldState.errorMessageSymmetricKeyReducer(actionResult),
         validSendToEmail = oldState.validSentToEmailReducer(actionResult),
+        validSymmetricKey = oldState.validSymmetricKeyReducer(actionResult),
         loading = loadingReducer(actionResult),
         navigateTo = shouldNavigateTo(actionResult),
         showDigitalSignDialog = showDigitalSignDialogReducer(actionResult),
@@ -77,15 +92,29 @@ class SendMailViewModel(
     private fun SendMailViewState.errorMessageSendToEmailReducer(actionResult: SendMailActionResult): String? =
         when (actionResult) {
             is SendMailActionResult.SetErrorMessageSendToEmail -> actionResult.errorMsg
-            is SendMailActionResult.SetValidEmail -> null
+            is SendMailActionResult.SetValidSendToEmail -> null
             else -> errorMessageSendToEmail
+        }
+
+    private fun SendMailViewState.errorMessageSymmetricKeyReducer(actionResult: SendMailActionResult): String? =
+        when (actionResult) {
+            is SendMailActionResult.SetErrorMessageSymmetricKey -> actionResult.errorMsg
+            is SendMailActionResult.SetValidSymmetricKey -> null
+            else -> errorMessageSymmetricKey
         }
 
     private fun SendMailViewState.validSentToEmailReducer(actionResult: SendMailActionResult): Boolean =
         when (actionResult) {
-            is SendMailActionResult.SetValidEmail -> true
+            is SendMailActionResult.SetValidSendToEmail -> true
             is SendMailActionResult.SetErrorMessageSendToEmail -> false
             else -> validSendToEmail
+        }
+
+    private fun SendMailViewState.validSymmetricKeyReducer(actionResult: SendMailActionResult): Boolean =
+        when (actionResult) {
+            is SendMailActionResult.SetValidSymmetricKey -> true
+            is SendMailActionResult.SetErrorMessageSymmetricKey -> false
+            else -> validSymmetricKey
         }
 
     private fun loadingReducer(actionResult: SendMailActionResult): Boolean =
@@ -102,6 +131,8 @@ class SendMailViewModel(
 
     private fun showEncryptionDialogReducer(actionResult: SendMailActionResult): Boolean =
         when (actionResult) {
+            is SendMailActionResult.SetValidSymmetricKey,
+            is SendMailActionResult.SetErrorMessageSymmetricKey,
             SendMailActionResult.ShowEncryptionDialog -> true
             else -> false
         }
