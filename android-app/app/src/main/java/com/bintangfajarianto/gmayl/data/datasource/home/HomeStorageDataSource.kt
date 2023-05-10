@@ -23,7 +23,7 @@ internal class HomeStorageDataSource(
         publicKey: String,
         symmetricKey: String,
     ) {
-        var formattedBody = ""
+        var formattedBody = mail.body
 
         if (symmetricKey.isNotBlank()) {
             formattedBody = bystarBlockCipher.encryptMessage(mail.body, symmetricKey)
@@ -49,9 +49,6 @@ internal class HomeStorageDataSource(
     override suspend fun deleteSentMail(mail: SentMail) {
         mailDatabase.sentMailDao.deleteMailFromSent(mail)
     }
-
-    override suspend fun decryptMail(hexBody: String, symmetricKey: String): String =
-        bystarBlockCipher.decryptMessage(hexBody, symmetricKey)
 
     companion object {
         private const val TEMP_DIGITAL_SIGNATURE_OPEN_TAG = "\n\n<ds>\n"
