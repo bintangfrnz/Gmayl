@@ -15,7 +15,5 @@ interface ReadOnlyKeyValueStorage {
 
     suspend fun contains(key: String): Boolean
 
-    suspend fun getAllKeys(): Set<String>
-
     suspend fun getCount(): Long
 }
