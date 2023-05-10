@@ -7,27 +7,27 @@ class SecureStorage(hawkBuilder: HawkBuilder) : KeyValueStorage {
     init {
         hawkBuilder.build()
     }
-    override suspend fun putBoolean(key: String, value: Boolean, clearWhenLogout: Boolean) {
+    override suspend fun putBoolean(key: String, value: Boolean) {
         Hawk.put(key, value)
     }
 
-    override suspend fun putDouble(key: String, value: Double, clearWhenLogout: Boolean) {
+    override suspend fun putDouble(key: String, value: Double) {
         Hawk.put(key, value)
     }
 
-    override suspend fun putFloat(key: String, value: Float, clearWhenLogout: Boolean) {
+    override suspend fun putFloat(key: String, value: Float) {
         Hawk.put(key, value)
     }
 
-    override suspend fun putLong(key: String, value: Long, clearWhenLogout: Boolean) {
+    override suspend fun putLong(key: String, value: Long) {
         Hawk.put(key, value)
     }
 
-    override suspend fun putInt(key: String, value: Int, clearWhenLogout: Boolean) {
+    override suspend fun putInt(key: String, value: Int) {
         Hawk.put(key, value)
     }
 
-    override suspend fun putString(key: String, value: String, clearWhenLogout: Boolean) {
+    override suspend fun putString(key: String, value: String) {
         Hawk.put(key, value)
     }
 
@@ -51,11 +51,7 @@ class SecureStorage(hawkBuilder: HawkBuilder) : KeyValueStorage {
 
     override suspend fun getString(key: String): String? = Hawk.get(key)
 
-    override suspend fun contains(key: String): Boolean = Hawk.get(key)
-
-    override suspend fun getAllKeys(): Set<String> {
-        return setOf()
-    }
+    override suspend fun contains(key: String): Boolean = Hawk.contains(key)
 
     override suspend fun getCount(): Long = Hawk.count()
 }
