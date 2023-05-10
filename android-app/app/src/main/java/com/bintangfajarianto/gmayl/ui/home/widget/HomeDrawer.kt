@@ -40,8 +40,9 @@ fun HomeDrawer(
     drawerItems: ImmutableList<DrawerItemType>,
     selectedDrawerItem: DrawerItemType,
     onChangeSelectedDrawerItem: (DrawerItemType) -> Unit,
-    modifier: Modifier = Modifier,
+    onClickKeyGenerator: () -> Unit,
     onClickLogout: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     LazyColumn(
         modifier = modifier
@@ -88,6 +89,12 @@ fun HomeDrawer(
         }
         items(items = drawerItems) { drawerItem ->
             when (drawerItem) {
+                DrawerItemType.KEY -> DrawerItem(
+                    drawerItemIcon = drawerItem.iconId,
+                    drawerItemName = drawerItem.title,
+                    color = GmaylTheme.color.primary70,
+                    onClickItem = onClickKeyGenerator,
+                )
                 DrawerItemType.LOGOUT -> DrawerItem(
                     drawerItemIcon = drawerItem.iconId,
                     drawerItemName = drawerItem.title,
@@ -122,6 +129,8 @@ private fun PreviewHomeDrawer() {
         ),
         drawerItems = enumValues<DrawerItemType>().toList().toPersistentList(),
         selectedDrawerItem = selectedDrawerItem,
-        onChangeSelectedDrawerItem = { selectedDrawerItem = it}
-    ) {}
+        onChangeSelectedDrawerItem = { selectedDrawerItem = it},
+        onClickKeyGenerator = {},
+        onClickLogout = {},
+    )
 }

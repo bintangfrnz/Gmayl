@@ -117,6 +117,7 @@ fun HomeRoute(
         user = user,
         drawerItems = enumValues<DrawerItemType>().toList().toPersistentList(),
         onSelectDrawerItem = { viewModel.onAction(HomeAction.OnSelectDrawerItem(it)) },
+        onClickGenerateKey = { viewModel.onAction(HomeAction.OnClickGenerateKey) },
         onClickLogout = { viewModel.onAction(HomeAction.OnClickLogout) },
         onClickMailItem = {
             viewModel.onAction(
@@ -142,6 +143,7 @@ private fun HomeScreen(
     viewState: HomeViewState,
     user: User,
     drawerItems: ImmutableList<DrawerItemType>,
+    onClickGenerateKey: () -> Unit,
     onClickLogout: () -> Unit,
     onClickMailItem: (Mail) -> Unit,
     onClickSendMail: () -> Unit,
@@ -151,6 +153,8 @@ private fun HomeScreen(
     onSelectDrawerItem: (DrawerItemType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val coroutineScope = rememberCoroutineScope()
+
     val snackBarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(key1 = viewState.dataMsgCondition, key2 = viewState.loading) {
@@ -183,12 +187,16 @@ private fun HomeScreen(
                 drawerItems = drawerItems,
                 selectedDrawerItem = viewState.selectedDrawerItem,
                 onChangeSelectedDrawerItem = onSelectDrawerItem,
+                onClickKeyGenerator = {
+                    onClickGenerateKey()
+                    coroutineScope.launch {
+                        drawerState.close()
+                    }
+                },
                 onClickLogout = onClickLogout,
             )
         },
     ) {
-        val coroutineScope = rememberCoroutineScope()
-
         val sheetState = rememberModalBottomSheetState(
             initialValue = ModalBottomSheetValue.Hidden,
             skipHalfExpanded = true,
@@ -430,6 +438,7 @@ private fun PreviewHomeScreen(
             email = "admin@gmail.com",
         ),
         drawerItems = enumValues<DrawerItemType>().toList().toPersistentList(),
+        onClickGenerateKey = {},
         onClickLogout = {},
         onClickMailItem = {},
         onClickSendMail = {},

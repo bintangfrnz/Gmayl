@@ -4,6 +4,7 @@ import com.bintangfajarianto.gmayl.base.BaseViewModel
 import com.bintangfajarianto.gmayl.core.RouteDestination
 import com.bintangfajarianto.gmayl.core.RouteDestinationHandler
 import com.bintangfajarianto.gmayl.core.router.AppRouter
+import com.bintangfajarianto.gmayl.core.router.CryptoRouter
 import com.bintangfajarianto.gmayl.core.router.HomeRouter
 import com.bintangfajarianto.gmayl.data.model.auth.User
 import com.bintangfajarianto.gmayl.data.model.general.DataMessageCondition
@@ -49,6 +50,7 @@ class HomeViewModel(
                 HomeActionResult.ShowLoading
             }
             HomeAction.OnClickBack -> HomeActionResult.ShowDialog
+            HomeAction.OnClickGenerateKey -> HomeActionResult.NavigateToKeyGenerator
             HomeAction.OnClickLogout -> HomeActionResult.Logout
             is HomeAction.OnClickMailItem -> HomeActionResult.NavigateToDetailMail(action.mail, action.mailType)
             is HomeAction.OnClickSendMail -> HomeActionResult.NavigateToSendMail(action.user)
@@ -105,6 +107,7 @@ class HomeViewModel(
     override fun navigateToReducer(actionResult: HomeActionResult): RouteDestination? =
         when (actionResult) {
             HomeActionResult.Logout -> AppRouter.Logout
+            HomeActionResult.NavigateToKeyGenerator -> CryptoRouter.KeyGeneratorPage
             is HomeActionResult.NavigateToSendMail -> HomeRouter.SendMailPage(actionResult.user)
             is HomeActionResult.NavigateToDetailMail -> HomeRouter.DetailMailPage(actionResult.mail, actionResult.mailType)
             else -> null

@@ -84,6 +84,10 @@ private class DrawerItemParameterProvider :
                 selected = true,
             ),
             DrawerItemParam(
+                drawerItem = DrawerItemType.KEY,
+                selected = false,
+            ),
+            DrawerItemParam(
                 drawerItem = DrawerItemType.LOGOUT,
                 selected = false,
             ),
@@ -101,6 +105,7 @@ private fun PreviewDrawerItem(
     @PreviewParameter(DrawerItemParameterProvider::class) param: DrawerItemParameterProvider.DrawerItemParam,
 ) {
     val color = when (param.drawerItem) {
+        DrawerItemType.KEY -> GmaylTheme.color.primary70
         DrawerItemType.LOGOUT -> GmaylTheme.color.rose50
         else -> GmaylTheme.color.mist100
     }

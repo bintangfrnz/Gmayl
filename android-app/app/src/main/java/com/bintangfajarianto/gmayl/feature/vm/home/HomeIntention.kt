@@ -23,6 +23,7 @@ data class HomeViewState(
 sealed class HomeAction : Action {
     data class InitData(val dataMsgCondition: DataMessageCondition?) : HomeAction()
     object OnClickBack : HomeAction()
+    object OnClickGenerateKey : HomeAction()
     object OnClickLogout : HomeAction()
     data class OnClickMailItem(val mail: Mail, val mailType: DrawerItemType) : HomeAction()
     data class OnClickSendMail(val user: User) : HomeAction()
@@ -34,6 +35,7 @@ sealed class HomeAction : Action {
 sealed class HomeActionResult : ActionResult {
     object DismissDialog : HomeActionResult()
     object Logout : HomeActionResult()
+    object NavigateToKeyGenerator : HomeActionResult()
     data class NavigateToSendMail(val user: User) : HomeActionResult()
     data class NavigateToDetailMail(val mail: Mail, val mailType: DrawerItemType) : HomeActionResult()
     data class SetDataCondition(val dataMsgCondition: DataMessageCondition?) : HomeActionResult()
