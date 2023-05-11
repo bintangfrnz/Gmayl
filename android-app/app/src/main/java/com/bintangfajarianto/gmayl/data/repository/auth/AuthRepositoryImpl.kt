@@ -4,8 +4,8 @@ import com.bintangfajarianto.gmayl.data.model.auth.User
 import com.bintangfajarianto.gmayl.data.model.auth.response.LoginResponse
 
 class AuthRepositoryImpl(
-    private val networkRepository: AuthNetworkRepository,
-    private val storageRepository: AuthStorageRepository,
+    networkRepository: AuthNetworkRepository,
+    storageRepository: AuthStorageRepository,
 ) : AuthRepository,
     AuthNetworkRepository by networkRepository,
     AuthStorageRepository by storageRepository {
