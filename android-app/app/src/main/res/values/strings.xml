@@ -38,4 +38,13 @@
     <string name="mail_detail_date">Date</string>
     <string name="mail_detail_decrypt_message_title">Decrypted message</string>
     <string name="mail_detail_decrypt_message">Decrypt Your Message</string>
+
+    <!-- Key Generator -->
+    <string name="key_generator_title">Key Generator</string>
+    <string name="key_generator_generate_new_key">Generate New Key</string>
+    <string name="key_generator_generate_reset_key">Reset Key</string>
+    <string name="key_generator_private_key">Your Private Key</string>
+    <string name="key_generator_private_key_hint">There is no Private Key</string>
+    <string name="key_generator_public_key">Your Public Key</string>
+    <string name="key_generator_public_key_hint">There is no Public Key</string>
 </resources>

@@ -152,7 +152,7 @@ fun GmaylNavHost(
         startDestination = startDestination,
     ) {
         authGraph()
-        cryptoGraph()
+        cryptoGraph(navController = navController)
         homeGraph(navController = navController)
     }
 }

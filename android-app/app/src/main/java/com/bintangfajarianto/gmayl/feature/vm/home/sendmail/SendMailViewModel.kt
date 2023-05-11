@@ -64,7 +64,7 @@ class SendMailViewModel(
             SymmetricKeyValidatorActionResult.InvalidLength ->
                 SendMailActionResult.SetErrorMessageSymmetricKey(errorMsg = "Symmetric key must be 16 characters")
             SymmetricKeyValidatorActionResult.Blank ->
-                SendMailActionResult.SetErrorMessageSymmetricKey(errorMsg = null)
+                SendMailActionResult.SetValidSymmetricKey(isValid = true)
         }
 
     override suspend fun reducer(
