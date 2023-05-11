@@ -142,7 +142,7 @@ fun SendMailRoute(
                         SendMailAction.OnReceiveDataCondition(
                             dataMsgCondition = DataMessageCondition(
                                 dataCondition = DataCondition.Failure,
-                                message = "Public Key successfully deleted",
+                                message = "Public Key successfully removed",
                             ),
                         ),
                     )
@@ -166,7 +166,7 @@ fun SendMailRoute(
                         SendMailAction.OnReceiveDataCondition(
                             dataMsgCondition = DataMessageCondition(
                                 dataCondition = DataCondition.Failure,
-                                message = "Symmetric Key successfully deleted",
+                                message = "Symmetric Key successfully removed",
                             ),
                         ),
                     )
