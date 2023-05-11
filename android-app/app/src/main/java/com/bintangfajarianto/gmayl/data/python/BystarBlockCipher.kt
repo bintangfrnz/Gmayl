@@ -1,6 +1,7 @@
 package com.bintangfajarianto.gmayl.data.python
 
 import android.content.Context
+import com.bintangfajarianto.gmayl.data.constant.PythonConstant
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
 
@@ -11,8 +12,8 @@ class BystarBlockCipher(private val context: Context) {
         }
 
         val py = Python.getInstance()
-        val pyObject = py.getModule(MAIN)
-        val result = pyObject.callAttr(ENCRYPT, plainText, key)
+        val pyObject = py.getModule(PythonConstant.MAIN)
+        val result = pyObject.callAttr(PythonConstant.ENCRYPT, plainText, key)
 
         return result.toString()
     }
@@ -23,15 +24,10 @@ class BystarBlockCipher(private val context: Context) {
         }
 
         val py = Python.getInstance()
-        val pyObject = py.getModule(MAIN)
-        val result = pyObject.callAttr(DECRYPT, hexText, key)
+        val pyObject = py.getModule(PythonConstant.MAIN)
+        val result = pyObject.callAttr(PythonConstant.DECRYPT, hexText, key)
 
         return result.toString()
     }
 
-    companion object {
-        private const val MAIN = "main"
-        private const val ENCRYPT = "encrypt"
-        private const val DECRYPT = "decrypt"
-    }
 }

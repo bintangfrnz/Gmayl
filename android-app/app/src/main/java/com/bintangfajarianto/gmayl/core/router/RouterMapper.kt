@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.core.os.bundleOf
 import com.bintangfajarianto.gmayl.core.RouteDestination
 import com.bintangfajarianto.gmayl.core.navigation.AuthRoutes
+import com.bintangfajarianto.gmayl.core.navigation.CryptoRoutes
 import com.bintangfajarianto.gmayl.core.navigation.HomeRoutes
 
 private typealias DestinationType = Pair<String?, Bundle?>
@@ -12,6 +13,7 @@ internal fun RouteDestination?.mapToDestination(): DestinationType =
     when (this) {
         is AppRouter -> mapAppRouter()
         is AuthRouter -> mapAuthRouter()
+        is CryptoRouter -> mapCryptoRouter()
         is HomeRouter -> mapHomeRouter()
         else -> null to null
     }
@@ -24,6 +26,11 @@ private fun AppRouter.mapAppRouter(): DestinationType =
 private fun AuthRouter.mapAuthRouter(): DestinationType =
     when (this) {
         is AuthRouter.LoginPage -> AuthRoutes.LOGIN_ROUTE to null
+    }
+
+private fun CryptoRouter.mapCryptoRouter(): DestinationType =
+    when (this) {
+        is CryptoRouter.KeyGeneratorPage -> CryptoRoutes.KEY_GENERATOR_ROUTE to null
     }
 
 private fun HomeRouter.mapHomeRouter(): DestinationType =

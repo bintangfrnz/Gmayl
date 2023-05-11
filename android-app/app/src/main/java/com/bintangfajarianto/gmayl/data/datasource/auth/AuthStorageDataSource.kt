@@ -8,38 +8,37 @@ import com.bintangfajarianto.gmayl.data.encodeToString
 import com.bintangfajarianto.gmayl.data.model.auth.User
 import com.bintangfajarianto.gmayl.data.repository.auth.AuthStorageRepository
 import com.bintangfajarianto.gmayl.data.storage.KeyValueStorage
+import com.bintangfajarianto.gmayl.data.storage.StorageKey
 
 internal class AuthStorageDataSource(
     private val secureStorage: KeyValueStorage,
 ) : AuthStorageRepository {
     override suspend fun saveUser(user: User) {
         secureStorage.putString(
-            key = AUTH_LOGGED_USER_KEY,
+            key = StorageKey.AUTH_LOGGED_USER_KEY.key,
             value = User(user).encodeToString(User.serializer()),
-            clearWhenLogout = true,
         )
     }
 
     override suspend fun getUser(): DataResult<User> {
-        val old = secureStorage.getString(AUTH_LOGGED_USER_KEY)?.decodeTo(User.serializer())
-            ?: return Error(Throwable("User is not available"))
+        val old = secureStorage.getString(StorageKey.AUTH_LOGGED_USER_KEY.key)
+            ?.decodeTo(User.serializer()) ?: return Error(Throwable("User is not available"))
         return Success(old)
     }
 
     override suspend fun setLogin(isLogin: Boolean) {
-        secureStorage.putBoolean(AUTH_IS_LOGIN_KEY, isLogin)
+        secureStorage.putBoolean(StorageKey.AUTH_IS_LOGIN_KEY.key, isLogin)
     }
 
     override suspend fun isLogin(): Boolean =
-        secureStorage.getBoolean(AUTH_IS_LOGIN_KEY) ?: false
+        secureStorage.getBoolean(StorageKey.AUTH_IS_LOGIN_KEY.key) ?: false
 
     override suspend fun logout() {
-        secureStorage.removeAll(true)
+        enumValues<StorageKey>().forEach { storageKey ->
+            if (storageKey.clearWhenLogout) {
+                secureStorage.remove(storageKey.key)
+            }
+        }
         setLogin(false)
-    }
-
-    companion object {
-        internal const val AUTH_IS_LOGIN_KEY = "authIsLoginKey"
-        internal const val AUTH_LOGGED_USER_KEY = "authLoggedUserKey"
     }
 }

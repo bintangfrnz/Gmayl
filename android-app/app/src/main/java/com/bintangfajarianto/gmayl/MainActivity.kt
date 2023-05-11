@@ -19,6 +19,7 @@ import com.bintangfajarianto.gmayl.core.RouteDestinationHandler
 import com.bintangfajarianto.gmayl.core.navigation.AuthRoutes.LOGIN_ROUTE
 import com.bintangfajarianto.gmayl.core.navigation.HomeRoutes.HOME_ROUTE
 import com.bintangfajarianto.gmayl.core.navigation.authGraph
+import com.bintangfajarianto.gmayl.core.navigation.cryptoGraph
 import com.bintangfajarianto.gmayl.core.navigation.homeGraph
 import com.bintangfajarianto.gmayl.core.router.AppRouter
 import com.bintangfajarianto.gmayl.core.router.mapToDestination
@@ -151,6 +152,7 @@ fun GmaylNavHost(
         startDestination = startDestination,
     ) {
         authGraph()
+        cryptoGraph(navController = navController)
         homeGraph(navController = navController)
     }
 }

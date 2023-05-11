@@ -2,10 +2,10 @@ package com.bintangfajarianto.gmayl.domain.usecase.home
 
 import com.bintangfajarianto.gmayl.base.ActionResult
 import com.bintangfajarianto.gmayl.base.BaseUseCase
-import com.bintangfajarianto.gmayl.data.repository.home.HomeRepository
+import com.bintangfajarianto.gmayl.data.repository.crypto.CryptoRepository
 
 class DecryptMailUseCase(
-    private val repository: HomeRepository,
+    private val repository: CryptoRepository,
 ) : BaseUseCase<DecryptMailUseCase.Params, DecryptMailUseCaseActionResult> {
     override suspend fun invoke(param: Params): DecryptMailUseCaseActionResult =
         when {

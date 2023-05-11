@@ -9,6 +9,7 @@ import com.bintangfajarianto.gmayl.di.module.RouteDestinationHandlerProviderModu
 import com.bintangfajarianto.gmayl.domain.di.auth.LoginStatusUseCaseModule
 import com.bintangfajarianto.gmayl.domain.di.auth.LogoutUseCaseModule
 import com.bintangfajarianto.gmayl.feature.di.FeatureAuthModule
+import com.bintangfajarianto.gmayl.feature.di.FeatureCryptoModule
 import com.bintangfajarianto.gmayl.feature.di.FeatureHomeModule
 import com.orhanobut.hawk.HawkBuilder
 import org.kodein.di.DI
@@ -31,6 +32,7 @@ class GmaylApplication : Application(), DIAware {
 
             // Feature
             importOnce(FeatureAuthModule)
+            importOnce(FeatureCryptoModule)
             importOnce(FeatureHomeModule)
 
             // Specific UseCase

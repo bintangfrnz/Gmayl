@@ -14,5 +14,4 @@ interface HomeStorageRepository {
     )
     suspend fun deleteInboxMail(mail: InboxMail)
     suspend fun deleteSentMail(mail: SentMail)
-    suspend fun decryptMail(hexBody: String, symmetricKey: String): String
 }
