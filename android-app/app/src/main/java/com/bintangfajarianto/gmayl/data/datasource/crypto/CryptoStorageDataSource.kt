@@ -25,4 +25,9 @@ class CryptoStorageDataSource(
         val oldPublicKey = secureStorage.getString(key = StorageKey.CRYPTO_PUBLIC_KEY.key).orEmpty()
         return Success(oldPrivateKey to oldPublicKey)
     }
+
+    override suspend fun deleteKeyPair() {
+        secureStorage.remove(key = StorageKey.CRYPTO_PRIVATE_KEY.key)
+        secureStorage.remove(key = StorageKey.CRYPTO_PUBLIC_KEY.key)
+    }
 }
