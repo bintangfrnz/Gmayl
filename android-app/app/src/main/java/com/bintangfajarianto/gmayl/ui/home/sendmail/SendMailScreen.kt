@@ -409,6 +409,7 @@ private fun SendMessageScreenContent(
         Spacer(modifier = Modifier.height(16.dp))
         Divider(color = GmaylTheme.color.mist30)
         GmaylKeypair(
+            modifier = Modifier.padding(vertical = 4.dp),
             keyContent = {
                  GmaylTextSelection(
                      title = stringResource(id = R.string.send_mail_encrypt_message),
@@ -446,6 +447,7 @@ private fun SendMessageScreenContent(
         )
         Divider(color = GmaylTheme.color.mist30)
         GmaylKeypair(
+            modifier = Modifier.padding(vertical = 4.dp),
             keyContent = {
                 GmaylTextSelection(
                     title = stringResource(id = R.string.send_mail_digital_sign),
