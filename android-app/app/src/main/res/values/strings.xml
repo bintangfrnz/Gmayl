@@ -31,7 +31,6 @@
     <string name="send_mail_private_key_hint">Enter your private key</string>
     <string name="send_mail_submit_key">Submit Key</string>
     <string name="send_mail_check_private_key">Check your private key or generate a new one here.</string>
-    <string name="send_mail_check_public_key">Find the public key here.</string>
     <string name="send_mail_here">here</string>
 
     <!-- Mail Detail -->
@@ -41,6 +40,10 @@
     <string name="mail_detail_date">Date</string>
     <string name="mail_detail_decrypt_message_title">Decrypted message</string>
     <string name="mail_detail_decrypt_message">Decrypt Your Message</string>
+    <string name="mail_detail_digital_sign">Verify Digital Sign</string>
+    <string name="mail_detail_public_key_title">Public Key</string>
+    <string name="mail_detail_public_key_hint">Enter a public key</string>
+    <string name="mail_detail_check_public_key">Find the public key here.</string>
 
     <!-- Key Generator -->
     <string name="key_generator_title">Key Generator</string>

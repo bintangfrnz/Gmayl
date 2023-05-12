@@ -30,6 +30,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,12 +55,14 @@ import com.bintangfajarianto.gmayl.feature.vm.home.detailmail.MailDetailViewStat
 import com.bintangfajarianto.gmayl.theme.GmaylTheme
 import com.bintangfajarianto.gmayl.ui.base.BaseDialog
 import com.bintangfajarianto.gmayl.ui.home.detailmail.widget.SenderItem
+import com.bintangfajarianto.gmayl.ui.home.dialog.InputKeyPairDialog
 import com.bintangfajarianto.gmayl.ui.home.dialog.InputSymmetricKeyDialog
 import com.bintangfajarianto.gmayl.ui.widget.GmaylAppBar
 import com.bintangfajarianto.gmayl.ui.widget.GmaylKeypair
 import com.bintangfajarianto.gmayl.ui.widget.GmaylSnackBarHost
 import com.bintangfajarianto.gmayl.ui.widget.GmaylSnackBarVisuals
 import com.bintangfajarianto.gmayl.ui.widget.GmaylTextSelection
+import java.math.BigInteger
 import org.kodein.di.compose.rememberViewModel
 
 @Composable
@@ -72,11 +75,23 @@ fun MailDetailRoute(
     val viewModel: MailDetailViewModel by rememberViewModel()
     val viewState by viewModel.stateFlow.collectAsState()
 
+    val isSigned by rememberSaveable {
+        mutableStateOf(
+            mail.signature != BigInteger.valueOf(0L) to BigInteger.valueOf(0L)
+        )
+    }
+
     // Key
-    var shouldDecrypt by remember {
+    var shouldDecrypt by rememberSaveable {
         mutableStateOf(false)
     }
-    var symmetricKey by remember {
+    var shouldVerifyDigitalSign by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var publicKey by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+    var symmetricKey by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue())
     }
 
@@ -86,18 +101,39 @@ fun MailDetailRoute(
         mail = mail,
         mailType = mailType,
         symmetricKey = symmetricKey,
+        publicKey = publicKey,
+        isSigned = isSigned,
         shouldDecrypt = shouldDecrypt,
+        shouldVerifyDigitalSign = shouldVerifyDigitalSign,
         onChangeShouldDecrypt = { shouldDecrypt = it },
+        onChangeShouldVerifyDigitalSign = { shouldVerifyDigitalSign = it },
         onClickBack = { navController.popBackStack() },
         onClickDeleteMail = { viewModel.onAction(MailDetailAction.OnClickDeleteMail) },
         onClickDecryptMail = { viewModel.onAction(MailDetailAction.OnClickDecryptMail) },
+        onClickVerifyMail = { viewModel.onAction(MailDetailAction.OnClickVerifyMail) },
         onClickReplyMail = { viewModel.onAction(MailDetailAction.OnClickReplyMail(mail)) },
+        onClickNavigateToKeyGenerator = { viewModel.onAction(MailDetailAction.OnClickNavigateToKeyGenerator) },
         onDismissDialog = { viewModel.onAction(MailDetailAction.OnDismissDialog) },
         onDismissSnackBar = { viewModel.onAction(MailDetailAction.OnDismissSnackBar) },
         onInputSymmetricKey = { viewModel.onAction(MailDetailAction.OnInputSymmetricKey(it)) },
-        OnSubmitDecryptMail = {
+        onSubmitDecryptMail = {
             symmetricKey = it
-            viewModel.onAction(MailDetailAction.OnSubmitDecryptMail(mail.body, symmetricKey.text))
+            val body = when {
+                isSigned -> mail.body.split("\n\n<ds>")[0]
+                else -> mail.body
+            }
+            viewModel.onAction(MailDetailAction.OnSubmitDecryptMail(body, symmetricKey.text))
+        },
+        onSubmitVerifyMail = {
+            publicKey = it
+            viewModel.onAction(
+                MailDetailAction.OnSubmitVerifyMail(
+                    plainBody = viewState.decryptedMessage.orEmpty(),
+                    publicKey = publicKey.text,
+                    r = mail.signature.first,
+                    s = mail.signature.second,
+                )
+            )
         },
         onSubmitDeleteMail = {
             navController.previousBackStackEntry?.savedStateHandle?.set(
@@ -123,17 +159,24 @@ private fun MailDetailScreen(
     viewState: MailDetailViewState,
     mail: Mail,
     mailType: DrawerItemType,
+    publicKey: TextFieldValue,
     symmetricKey: TextFieldValue,
+    isSigned: Boolean,
     shouldDecrypt: Boolean,
+    shouldVerifyDigitalSign: Boolean,
     onChangeShouldDecrypt: (Boolean) -> Unit,
+    onChangeShouldVerifyDigitalSign: (Boolean) -> Unit,
     onClickBack: () -> Unit,
     onClickDeleteMail: () -> Unit,
     onClickDecryptMail: () -> Unit,
+    onClickVerifyMail: () -> Unit,
     onClickReplyMail: () -> Unit,
+    onClickNavigateToKeyGenerator: () -> Unit,
     onDismissDialog: () -> Unit,
     onDismissSnackBar: () -> Unit,
     onInputSymmetricKey: (String) -> Unit,
-    OnSubmitDecryptMail: (TextFieldValue) -> Unit,
+    onSubmitDecryptMail: (TextFieldValue) -> Unit,
+    onSubmitVerifyMail: (TextFieldValue) -> Unit,
     onSubmitDeleteMail: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -166,8 +209,12 @@ private fun MailDetailScreen(
         }
     }
 
-    LaunchedEffect(key1 = viewState.dialogData, key2 = viewState.showDecryptionDialog) {
-        if (viewState.dialogData != null || viewState.showDecryptionDialog) {
+    LaunchedEffect(
+        key1 = viewState.dialogData,
+        key2 = viewState.showDecryptionDialog,
+        key3 = viewState.showDigitalSignDialog,
+    ) {
+        if (viewState.dialogData != null || viewState.showDecryptionDialog || viewState.showDigitalSignDialog) {
             sheetState.show()
         } else {
             sheetState.hide()
@@ -195,7 +242,15 @@ private fun MailDetailScreen(
                     enabled = viewState.validSymmetricKey,
                     loading = viewState.loading,
                     onChangeKey = onInputSymmetricKey,
-                    onClickSave = OnSubmitDecryptMail,
+                    onClickSave = onSubmitDecryptMail,
+                )
+                viewState.showDigitalSignDialog -> InputKeyPairDialog(
+                    key = publicKey,
+                    title = stringResource(id = R.string.mail_detail_public_key_title),
+                    hint = stringResource(id = R.string.mail_detail_public_key_hint),
+                    info = stringResource(id = R.string.mail_detail_check_public_key),
+                    onClickNavigateToKeyGenerator = onClickNavigateToKeyGenerator,
+                    onClickSave = onSubmitVerifyMail,
                 )
                 else -> Box(modifier = Modifier.size(1.dp))
             }
@@ -228,10 +283,15 @@ private fun MailDetailScreen(
                 viewState = viewState,
                 mail = mail,
                 mailType = mailType,
+                publicKey = publicKey,
                 symmetricKey = symmetricKey,
+                isSigned = isSigned,
                 shouldDecrypt = shouldDecrypt,
+                shouldVerifyDigitalSign = shouldVerifyDigitalSign,
                 onChangeShouldDecrypt = onChangeShouldDecrypt,
+                onChangeShouldVerifyDigitalSign = onChangeShouldVerifyDigitalSign,
                 onClickDecryptMail = onClickDecryptMail,
+                onClickVerifyMail = onClickVerifyMail,
                 onClickReplyMail = onClickReplyMail,
             )
         }
@@ -243,10 +303,15 @@ private fun MailDetailScreenContent(
     viewState: MailDetailViewState,
     mail: Mail,
     mailType: DrawerItemType,
+    publicKey: TextFieldValue,
     symmetricKey: TextFieldValue,
+    isSigned: Boolean,
     shouldDecrypt: Boolean,
+    shouldVerifyDigitalSign: Boolean,
     onChangeShouldDecrypt: (Boolean) -> Unit,
+    onChangeShouldVerifyDigitalSign: (Boolean) -> Unit,
     onClickDecryptMail: () -> Unit,
+    onClickVerifyMail: () -> Unit,
     onClickReplyMail: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -288,9 +353,10 @@ private fun MailDetailScreenContent(
         )
         Spacer(modifier = Modifier.height(16.dp))
         Divider(color = GmaylTheme.color.mist30)
+
         if (mail.encrypted) {
-            Spacer(modifier = Modifier.height(4.dp))
             GmaylKeypair(
+                modifier = Modifier.padding(vertical = 4.dp),
                 keyContent = {
                     GmaylTextSelection(
                         title = stringResource(id = R.string.mail_detail_decrypt_message),
@@ -327,8 +393,8 @@ private fun MailDetailScreenContent(
                 },
             )
         }
+
         if (!viewState.decryptedMessage.isNullOrEmpty() && shouldDecrypt) {
-            Spacer(modifier = Modifier.height(4.dp))
             Divider(color = GmaylTheme.color.mist30)
             Spacer(modifier = Modifier.height(16.dp))
             Text(
@@ -348,6 +414,48 @@ private fun MailDetailScreenContent(
                 style = GmaylTheme.typography.contentSmallRegular,
                 color = GmaylTheme.color.mist100,
             )
+            Spacer(modifier = Modifier.height(16.dp))
+            Divider(color = GmaylTheme.color.mist30)
+
+            if (isSigned) {
+                GmaylKeypair(
+                    modifier = Modifier.padding(vertical = 4.dp),
+                    keyContent = {
+                        GmaylTextSelection(
+                            title = stringResource(id = R.string.mail_detail_digital_sign),
+                            subtitle = publicKey.text,
+                            prefixSubtitle = stringResource(id = R.string.mail_detail_public_key_title),
+                            enabled = shouldVerifyDigitalSign && !viewState.loading,
+                            onClick = onClickVerifyMail,
+                        )
+                    },
+                    pairContent = {
+                        Switch(
+                            modifier = Modifier.align(Alignment.CenterEnd),
+                            checked = shouldVerifyDigitalSign,
+                            enabled = !viewState.loading,
+                            onCheckedChange = onChangeShouldVerifyDigitalSign,
+                            thumbContent = {
+                                Icon(
+                                    modifier = Modifier.size(16.dp),
+                                    painter = painterResource(id = R.drawable.ic_lock),
+                                    contentDescription = "icon lock",
+                                )
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = GmaylTheme.color.primary50,
+                                checkedTrackColor = GmaylTheme.color.primary30,
+                                checkedBorderColor = GmaylTheme.color.primary50,
+                                checkedIconColor = GmaylTheme.color.primary10,
+                                uncheckedThumbColor = GmaylTheme.color.primary50,
+                                uncheckedTrackColor = GmaylTheme.color.primary10,
+                                uncheckedBorderColor = GmaylTheme.color.primary50,
+                                uncheckedIconColor = GmaylTheme.color.primary10,
+                            ),
+                        )
+                    },
+                )
+            }
         }
     }
 }
@@ -365,16 +473,24 @@ private fun PreviewMailDetailScreen() {
             sentTime = "2023-03-05T13:15:30+07:00",
         ),
         mailType = DrawerItemType.INBOX,
+        publicKey = TextFieldValue(),
         symmetricKey = TextFieldValue(),
+        isSigned = false,
         shouldDecrypt = false,
+        shouldVerifyDigitalSign = false,
         onChangeShouldDecrypt = {},
+        onChangeShouldVerifyDigitalSign = {},
         onClickBack = {},
         onClickDeleteMail = {},
         onClickDecryptMail = {},
+        onClickVerifyMail = {},
         onClickReplyMail = {},
+        onClickNavigateToKeyGenerator = {},
         onDismissDialog = {},
         onDismissSnackBar = {},
         onInputSymmetricKey = {},
-        OnSubmitDecryptMail = {},
-        onSubmitDeleteMail = {})
+        onSubmitDecryptMail = {},
+        onSubmitVerifyMail = {},
+        onSubmitDeleteMail = {},
+    )
 }
