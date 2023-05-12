@@ -145,7 +145,6 @@ private fun PreviewSenderItem() {
             subject = "[Tubes 3] Ini contoh subject aja",
             body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent interdum nibh at porttitor pharetra. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Maecenas mattis vitae nisl at convallis. Quisque rhoncus, felis id bibendum commodo, risus nulla faucibus magna, id eleifend eros ante non sapien. Quisque.",
             sentTime = "2023-04-05T13:15:30+07:00",
-            encrypted = false,
         ),
         onClickReply = {},
     )

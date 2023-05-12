@@ -382,7 +382,6 @@ private class HomeScreenParameterProvider :
                         subject = "[Tugas 1] Ini contoh subject aja",
                         body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent interdum nibh at porttitor pharetra. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Maecenas mattis vitae nisl at convallis. Quisque rhoncus, felis id bibendum commodo, risus nulla faucibus magna, id eleifend eros ante non sapien. Quisque.",
                         sentTime = "2023-03-05T13:15:30+07:00",
-                        encrypted = false,
                     ),
                     InboxMail(
                         sender = User("Bintang Fajar"),
@@ -390,7 +389,6 @@ private class HomeScreenParameterProvider :
                         subject = "[Tugas 2] Ini contoh subject aja",
                         body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent interdum nibh at porttitor pharetra. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Maecenas mattis vitae nisl at convallis. Quisque rhoncus, felis id bibendum commodo, risus nulla faucibus magna, id eleifend eros ante non sapien. Quisque.",
                         sentTime = "2023-04-05T13:15:30+07:00",
-                        encrypted = false,
                     ),
                     InboxMail(
                         sender = User("Bintang Fajarianto"),
@@ -398,7 +396,6 @@ private class HomeScreenParameterProvider :
                         subject = "[Tugas 3] Ini contoh subject aja",
                         body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent interdum nibh at porttitor pharetra. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Maecenas mattis vitae nisl at convallis. Quisque rhoncus, felis id bibendum commodo, risus nulla faucibus magna, id eleifend eros ante non sapien. Quisque.",
                         sentTime = "2023-05-05T13:15:30+07:00",
-                        encrypted = false,
                     ),
                 ),
             ),
@@ -411,7 +408,6 @@ private class HomeScreenParameterProvider :
                         subject = "[Tugas 1] Ini contoh subject aja",
                         body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent interdum nibh at porttitor pharetra. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Maecenas mattis vitae nisl at convallis. Quisque rhoncus, felis id bibendum commodo, risus nulla faucibus magna, id eleifend eros ante non sapien. Quisque.",
                         sentTime = "2023-03-05T13:15:30+07:00",
-                        encrypted = false,
                     ),
                     SentMail(
                         sender = User("Admin"),
@@ -419,7 +415,6 @@ private class HomeScreenParameterProvider :
                         subject = "[Tugas 2] Ini contoh subject aja",
                         body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent interdum nibh at porttitor pharetra. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Maecenas mattis vitae nisl at convallis. Quisque rhoncus, felis id bibendum commodo, risus nulla faucibus magna, id eleifend eros ante non sapien. Quisque.",
                         sentTime = "2023-04-05T13:15:30+07:00",
-                        encrypted = false,
                     ),
                 ),
             ),

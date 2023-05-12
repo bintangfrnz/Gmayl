@@ -26,9 +26,10 @@ sealed class SendMailAction : Action {
     object OnClickSignMail : SendMailAction()
     data class OnClickSendMail(
         val mail: Mail,
-        val publicKey: String,
+        val privateKey: String,
         val symmetricKey: String,
     ) : SendMailAction()
+    object OnClickNavigateToKeyGenerator : SendMailAction()
     object OnDismissDialog : SendMailAction()
     object OnDismissSnackBar : SendMailAction()
     data class OnInputSendToEmail(val email: String) : SendMailAction()
@@ -40,6 +41,7 @@ sealed class SendMailAction : Action {
 
 sealed class SendMailActionResult : ActionResult {
     object DismissDialog : SendMailActionResult()
+    object NavigateToKeyGenerator : SendMailActionResult()
     object NavigateToHome : SendMailActionResult()
     data class SetDataCondition(
         val dataMsgCondition: DataMessageCondition?,
