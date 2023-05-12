@@ -2,19 +2,15 @@ package com.bintangfajarianto.gmayl.data.model.home
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.bintangfajarianto.gmayl.core.serializer.SerializableBigInteger
 import com.bintangfajarianto.gmayl.data.model.auth.User
 import com.bintangfajarianto.gmayl.extension.getLocalDate
 import com.bintangfajarianto.gmayl.extension.parseIsoInstant
-import java.math.BigInteger
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.parcelize.Parcelize
-import kotlinx.serialization.Serializable
 
 @Parcelize
 @Entity
-@Serializable
 data class InboxMail(
     override val sender: User,
     override val receiver: User,
@@ -22,8 +18,7 @@ data class InboxMail(
     override val body: String,
     override val sentTime: String,
     override val encrypted: Boolean = false,
-    override val signature: Pair<SerializableBigInteger, SerializableBigInteger> =
-        BigInteger.valueOf(0L) to BigInteger.valueOf(0L),
+    override val signature: Pair<String, String> = ("" to ""),
     @PrimaryKey(autoGenerate = true)
     override val id: Int? = null,
 ) : Mail {

@@ -3,7 +3,6 @@ package com.bintangfajarianto.gmayl.domain.usecase.crypto
 import com.bintangfajarianto.gmayl.base.ActionResult
 import com.bintangfajarianto.gmayl.base.BaseUseCase
 import com.bintangfajarianto.gmayl.data.repository.crypto.CryptoRepository
-import java.math.BigInteger
 
 class VerifyMailUseCase(
     private val repository: CryptoRepository,
@@ -24,8 +23,8 @@ class VerifyMailUseCase(
     data class Params(
         val plainBody: String,
         val publicKey: String,
-        val r: BigInteger,
-        val s: BigInteger,
+        val r: String,
+        val s: String,
     )
 }
 

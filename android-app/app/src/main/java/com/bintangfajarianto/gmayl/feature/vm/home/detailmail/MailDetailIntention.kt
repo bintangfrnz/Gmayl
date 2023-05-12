@@ -7,7 +7,6 @@ import com.bintangfajarianto.gmayl.core.RouteDestination
 import com.bintangfajarianto.gmayl.data.model.general.DataMessageCondition
 import com.bintangfajarianto.gmayl.data.model.general.DialogData
 import com.bintangfajarianto.gmayl.data.model.home.Mail
-import java.math.BigInteger
 
 data class MailDetailViewState(
     val decryptedMessage: String? = null,
@@ -36,8 +35,8 @@ sealed class MailDetailAction : Action {
     data class OnSubmitVerifyMail(
         val plainBody: String,
         val publicKey: String,
-        val r: BigInteger,
-        val s: BigInteger,
+        val r: String,
+        val s: String,
     ) : MailDetailAction()
     data class OnReceiveDataCondition(
         val dataMsgCondition: DataMessageCondition?,

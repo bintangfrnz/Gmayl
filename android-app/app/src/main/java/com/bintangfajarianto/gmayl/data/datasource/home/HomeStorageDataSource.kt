@@ -34,7 +34,7 @@ internal class HomeStorageDataSource(
 
         if (privateKey.isNotBlank()) {
             val signature = digitalSign.sign(privateKey, mail.body)
-            formattedBody = "$formattedBody\n\n${formatDigitalSignature(signature.second.toString())}"
+            formattedBody = "$formattedBody\n\n${formatDigitalSignature(signature.second)}"
             newSignature = signature
         }
 

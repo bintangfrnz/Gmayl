@@ -16,7 +16,6 @@ import com.bintangfajarianto.gmayl.domain.usecase.crypto.VerifyMailUseCaseAction
 import com.bintangfajarianto.gmayl.domain.usecase.home.DecryptMailUseCase
 import com.bintangfajarianto.gmayl.domain.usecase.home.DecryptMailUseCaseActionResult
 import com.bintangfajarianto.gmayl.domain.usecase.home.DeleteMailUseCase
-import java.math.BigInteger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 
@@ -89,8 +88,8 @@ class MailDetailViewModel(
     private suspend fun verifyMail(
         plainBody: String,
         key: String,
-        r: BigInteger,
-        s: BigInteger,
+        r: String,
+        s: String,
     ): MailDetailActionResult =
         when (val result = verifyMailUseCase.invoke(VerifyMailUseCase.Params(plainBody, key, r, s))) {
             is VerifyMailUseCaseActionResult.Success -> MailDetailActionResult.SetVerifiedMail(result.verified)
@@ -107,8 +106,8 @@ class MailDetailViewModel(
         validSymmetricKey = oldState.validSymmetricKeyReducer(actionResult),
         navigateTo = shouldNavigateTo(actionResult),
         loading = oldState.loadingReducer(actionResult),
-        showDecryptionDialog = showDecryptionDialogReducer(actionResult),
-        showDigitalSignDialog = showDigitalSignDialogReducer(actionResult),
+        showDecryptionDialog = oldState.showDecryptionDialogReducer(actionResult),
+        showDigitalSignDialog = oldState.showDigitalSignDialogReducer(actionResult),
         dialogData = oldState.dialogDataReducer(actionResult),
         dataMsgCondition = oldState.dataConditionReducer(actionResult),
     )
@@ -135,6 +134,7 @@ class MailDetailViewModel(
     private fun MailDetailViewState.verifiedMailReducer(actionResult: MailDetailActionResult): Boolean? {
         return when (actionResult) {
             is MailDetailActionResult.SetVerifiedMail -> actionResult.verifiedMail
+            is MailDetailActionResult.SetDataCondition -> null
             else -> verifiedMail
         }
     }
@@ -157,24 +157,25 @@ class MailDetailViewModel(
         when (actionResult) {
             MailDetailActionResult.ShowLoading -> true
             is MailDetailActionResult.SetDecryptedMessage,
+            is MailDetailActionResult.SetVerifiedMail,
             MailDetailActionResult.BackToHome -> false
             else -> loading
         }
 
-    private fun showDecryptionDialogReducer(actionResult: MailDetailActionResult): Boolean =
+    private fun MailDetailViewState.showDecryptionDialogReducer(actionResult: MailDetailActionResult): Boolean =
         when (actionResult) {
             is MailDetailActionResult.SetValidSymmetricKey,
             is MailDetailActionResult.SetErrorMessageSymmetricKey,
-            MailDetailActionResult.ShowLoading,
             MailDetailActionResult.ShowDecryptionDialog -> true
+            MailDetailActionResult.ShowLoading -> showDecryptionDialog
             else -> false
         }
 
-    private fun showDigitalSignDialogReducer(actionResult: MailDetailActionResult): Boolean =
+    private fun MailDetailViewState.showDigitalSignDialogReducer(actionResult: MailDetailActionResult): Boolean =
         when (actionResult) {
-            MailDetailActionResult.ShowLoading,
             MailDetailActionResult.NavigateToKeyGenerator,
             MailDetailActionResult.ShowDigitalSignDialog -> true
+            MailDetailActionResult.ShowLoading -> showDigitalSignDialog
             else -> false
         }
 
