@@ -62,7 +62,6 @@ import com.bintangfajarianto.gmayl.ui.widget.GmaylKeypair
 import com.bintangfajarianto.gmayl.ui.widget.GmaylSnackBarHost
 import com.bintangfajarianto.gmayl.ui.widget.GmaylSnackBarVisuals
 import com.bintangfajarianto.gmayl.ui.widget.GmaylTextSelection
-import java.math.BigInteger
 import org.kodein.di.compose.rememberViewModel
 
 @Composable
@@ -77,7 +76,7 @@ fun MailDetailRoute(
 
     val isSigned by rememberSaveable {
         mutableStateOf(
-            mail.signature != BigInteger.valueOf(0L) to BigInteger.valueOf(0L)
+            mail.signature != ("" to "")
         )
     }
 
@@ -93,6 +92,28 @@ fun MailDetailRoute(
     }
     var symmetricKey by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue())
+    }
+
+    LaunchedEffect(key1 = viewState.verifiedMail) {
+        when (viewState.verifiedMail) {
+            true -> viewModel.onAction(
+                MailDetailAction.OnReceiveDataCondition(
+                    dataMsgCondition = DataMessageCondition(
+                        dataCondition = DataCondition.Success,
+                        message = "Email Verified",
+                    ),
+                )
+            )
+            false -> viewModel.onAction(
+                MailDetailAction.OnReceiveDataCondition(
+                    dataMsgCondition = DataMessageCondition(
+                        dataCondition = DataCondition.Failure,
+                        message = "Email Not Verified",
+                    ),
+                )
+            )
+            null -> return@LaunchedEffect
+        }
     }
 
     MailDetailScreen(
@@ -118,17 +139,26 @@ fun MailDetailRoute(
         onInputSymmetricKey = { viewModel.onAction(MailDetailAction.OnInputSymmetricKey(it)) },
         onSubmitDecryptMail = {
             symmetricKey = it
-            val body = when {
+
+            val hexBody = when {
                 isSigned -> mail.body.split("\n\n<ds>")[0]
                 else -> mail.body
             }
-            viewModel.onAction(MailDetailAction.OnSubmitDecryptMail(body, symmetricKey.text))
+
+            viewModel.onAction(MailDetailAction.OnSubmitDecryptMail(hexBody, symmetricKey.text))
         },
         onSubmitVerifyMail = {
             publicKey = it
+            shouldVerifyDigitalSign = false
+
+            val plainBody = when {
+                mail.encrypted -> viewState.decryptedMessage.orEmpty()
+                else -> mail.body.split("\n\n<ds>")[0]
+            }
+
             viewModel.onAction(
                 MailDetailAction.OnSubmitVerifyMail(
-                    plainBody = viewState.decryptedMessage.orEmpty(),
+                    plainBody = plainBody,
                     publicKey = publicKey.text,
                     r = mail.signature.first,
                     s = mail.signature.second,
@@ -249,6 +279,7 @@ private fun MailDetailScreen(
                     title = stringResource(id = R.string.mail_detail_public_key_title),
                     hint = stringResource(id = R.string.mail_detail_public_key_hint),
                     info = stringResource(id = R.string.mail_detail_check_public_key),
+                    loading = viewState.loading,
                     onClickNavigateToKeyGenerator = onClickNavigateToKeyGenerator,
                     onClickSave = onSubmitVerifyMail,
                 )
@@ -416,46 +447,46 @@ private fun MailDetailScreenContent(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Divider(color = GmaylTheme.color.mist30)
+        }
 
-            if (isSigned) {
-                GmaylKeypair(
-                    modifier = Modifier.padding(vertical = 4.dp),
-                    keyContent = {
-                        GmaylTextSelection(
-                            title = stringResource(id = R.string.mail_detail_digital_sign),
-                            subtitle = publicKey.text,
-                            prefixSubtitle = stringResource(id = R.string.mail_detail_public_key_title),
-                            enabled = shouldVerifyDigitalSign && !viewState.loading,
-                            onClick = onClickVerifyMail,
-                        )
-                    },
-                    pairContent = {
-                        Switch(
-                            modifier = Modifier.align(Alignment.CenterEnd),
-                            checked = shouldVerifyDigitalSign,
-                            enabled = !viewState.loading,
-                            onCheckedChange = onChangeShouldVerifyDigitalSign,
-                            thumbContent = {
-                                Icon(
-                                    modifier = Modifier.size(16.dp),
-                                    painter = painterResource(id = R.drawable.ic_lock),
-                                    contentDescription = "icon lock",
-                                )
-                            },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = GmaylTheme.color.primary50,
-                                checkedTrackColor = GmaylTheme.color.primary30,
-                                checkedBorderColor = GmaylTheme.color.primary50,
-                                checkedIconColor = GmaylTheme.color.primary10,
-                                uncheckedThumbColor = GmaylTheme.color.primary50,
-                                uncheckedTrackColor = GmaylTheme.color.primary10,
-                                uncheckedBorderColor = GmaylTheme.color.primary50,
-                                uncheckedIconColor = GmaylTheme.color.primary10,
-                            ),
-                        )
-                    },
-                )
-            }
+        if (isSigned && (!mail.encrypted || !viewState.decryptedMessage.isNullOrEmpty())) {
+            GmaylKeypair(
+                modifier = Modifier.padding(vertical = 4.dp),
+                keyContent = {
+                    GmaylTextSelection(
+                        title = stringResource(id = R.string.mail_detail_digital_sign),
+                        subtitle = publicKey.text,
+                        prefixSubtitle = stringResource(id = R.string.mail_detail_public_key_title),
+                        enabled = shouldVerifyDigitalSign && !viewState.loading,
+                        onClick = onClickVerifyMail,
+                    )
+                },
+                pairContent = {
+                    Switch(
+                        modifier = Modifier.align(Alignment.CenterEnd),
+                        checked = shouldVerifyDigitalSign,
+                        enabled = !viewState.loading,
+                        onCheckedChange = onChangeShouldVerifyDigitalSign,
+                        thumbContent = {
+                            Icon(
+                                modifier = Modifier.size(16.dp),
+                                painter = painterResource(id = R.drawable.ic_lock),
+                                contentDescription = "icon lock",
+                            )
+                        },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = GmaylTheme.color.primary50,
+                            checkedTrackColor = GmaylTheme.color.primary30,
+                            checkedBorderColor = GmaylTheme.color.primary50,
+                            checkedIconColor = GmaylTheme.color.primary10,
+                            uncheckedThumbColor = GmaylTheme.color.primary50,
+                            uncheckedTrackColor = GmaylTheme.color.primary10,
+                            uncheckedBorderColor = GmaylTheme.color.primary50,
+                            uncheckedIconColor = GmaylTheme.color.primary10,
+                        ),
+                    )
+                },
+            )
         }
     }
 }

@@ -28,6 +28,7 @@ class SHA3_256:
 
         # Absorbing phase
         offset = 0
+        block_size = 0
         while (offset < len(message_bytes)):
             block_size = min(len(message_bytes) - offset, self.rate)
             for idx in range(block_size):
