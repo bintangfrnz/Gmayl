@@ -9,7 +9,7 @@ interface HomeStorageRepository {
     suspend fun getSentMails(): List<SentMail>
     suspend fun sendMail(
         mail: Mail,
-        publicKey: String = "",
+        privateKey: String = "",
         symmetricKey: String = "",
     )
     suspend fun deleteInboxMail(mail: InboxMail)

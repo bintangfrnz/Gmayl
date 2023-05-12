@@ -14,9 +14,6 @@ internal class CryptoNetworkDataSource(
     override suspend fun generateKeyPair(): Pair<String, String> =
         digitalSign.generateKeyPair()
 
-    override suspend fun sign(privateKey: String, message: String): Pair<Int, Int> =
-        digitalSign.sign(privateKey, message)
-
-    override suspend fun verify(publicKey: String, message: String, r: Int, s: Int): Boolean =
+    override suspend fun verify(publicKey: String, message: String, r: String, s: String): Boolean =
         digitalSign.verify(publicKey, message, r, s)
 }

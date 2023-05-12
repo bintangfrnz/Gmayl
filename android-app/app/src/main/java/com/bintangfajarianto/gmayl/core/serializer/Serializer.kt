@@ -1,4 +1,4 @@
-package com.bintangfajarianto.gmayl.data
+package com.bintangfajarianto.gmayl.core.serializer
 
 import io.github.aakira.napier.Napier
 import kotlinx.serialization.DeserializationStrategy

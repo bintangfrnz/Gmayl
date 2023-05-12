@@ -12,6 +12,7 @@ interface Mail : Parcelable {
     val body: String
     val sentTime: String
     val encrypted: Boolean
+    val signature: Pair<String, String>
 
     fun getSentTimeAsLocalDate(): LocalDate
 }

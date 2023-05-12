@@ -27,6 +27,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -50,7 +51,8 @@ import com.bintangfajarianto.gmayl.feature.vm.home.sendmail.SendMailAction
 import com.bintangfajarianto.gmayl.feature.vm.home.sendmail.SendMailViewModel
 import com.bintangfajarianto.gmayl.feature.vm.home.sendmail.SendMailViewState
 import com.bintangfajarianto.gmayl.theme.GmaylTheme
-import com.bintangfajarianto.gmayl.ui.home.dialog.InputKeyDialog
+import com.bintangfajarianto.gmayl.ui.home.dialog.InputKeyPairDialog
+import com.bintangfajarianto.gmayl.ui.home.dialog.InputSymmetricKeyDialog
 import com.bintangfajarianto.gmayl.ui.widget.GmaylAppBar
 import com.bintangfajarianto.gmayl.ui.widget.GmaylKeypair
 import com.bintangfajarianto.gmayl.ui.widget.GmaylPrefixTextInput
@@ -76,27 +78,27 @@ fun SendMailRoute(
     val keyboard = LocalSoftwareKeyboardController.current
 
     // Text Input
-    var sendTo by remember {
+    var sendTo by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(receiver.email))
     }
-    var subject by remember {
+    var subject by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue())
     }
-    var message by remember {
+    var message by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue())
     }
 
     // Key
-    var shouldEncrypt by remember {
+    var shouldEncrypt by rememberSaveable {
         mutableStateOf(false)
     }
-    var shouldAddDigitalSign by remember {
+    var shouldAddDigitalSign by rememberSaveable {
         mutableStateOf(false)
     }
-    var publicKey by remember {
+    var privateKey by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue())
     }
-    var symmetricKey by remember {
+    var symmetricKey by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue())
     }
 
@@ -114,7 +116,7 @@ fun SendMailRoute(
         subject = subject,
         message = message,
         symmetricKey = symmetricKey,
-        publicKey = publicKey,
+        privateKey = privateKey,
         shouldEncrypt = shouldEncrypt,
         shouldAddDigitalSign = shouldAddDigitalSign,
         onChangeShouldEncrypt = { shouldEncrypt = it },
@@ -122,27 +124,30 @@ fun SendMailRoute(
         onClickBack = { navController.popBackStack() },
         onClickEncryptMail = { viewModel.onAction(SendMailAction.OnClickEncryptMail) },
         onClickSignMail = { viewModel.onAction(SendMailAction.OnClickSignMail) },
+        onClickNavigateToKeyGenerator = { viewModel.onAction(SendMailAction.OnClickNavigateToKeyGenerator) },
         onDismissDialog = { viewModel.onAction(SendMailAction.OnDismissDialog) },
         onDismissSnackBar = { viewModel.onAction(SendMailAction.OnDismissSnackBar) },
         onInputSymmetricKey = { viewModel.onAction(SendMailAction.OnInputSymmetricKey(it)) },
-        onSavePublicKey = {
-            publicKey = it
+        onSavePrivateKey = {
+            privateKey = it
             when {
-                publicKey.text.isNotEmpty() -> viewModel.onAction(
-                    SendMailAction.OnReceiveDataCondition(
-                        dataMsgCondition = DataMessageCondition(
-                            dataCondition = DataCondition.Success,
-                            message = "Public Key successfully changed",
+                privateKey.text.isNotEmpty() -> {
+                    viewModel.onAction(
+                        SendMailAction.OnReceiveDataCondition(
+                            dataMsgCondition = DataMessageCondition(
+                                dataCondition = DataCondition.Success,
+                                message = "Private Key successfully changed",
+                            ),
                         ),
-                    ),
-                )
+                    )
+                }
                 else -> {
                     shouldAddDigitalSign = false
                     viewModel.onAction(
                         SendMailAction.OnReceiveDataCondition(
                             dataMsgCondition = DataMessageCondition(
                                 dataCondition = DataCondition.Failure,
-                                message = "Public Key successfully removed",
+                                message = "Private Key successfully removed",
                             ),
                         ),
                     )
@@ -198,7 +203,7 @@ fun SendMailRoute(
                         sentTime = Clock.System.now().toString(),
                         encrypted = shouldEncrypt,
                     ),
-                    publicKey = publicKey.text,
+                    privateKey = privateKey.text,
                     symmetricKey = symmetricKey.text,
                 )
             )
@@ -213,7 +218,7 @@ private fun SendMessageScreen(
     sendTo: TextFieldValue,
     subject: TextFieldValue,
     message: TextFieldValue,
-    publicKey: TextFieldValue,
+    privateKey: TextFieldValue,
     symmetricKey: TextFieldValue,
     shouldEncrypt: Boolean,
     shouldAddDigitalSign: Boolean,
@@ -222,10 +227,11 @@ private fun SendMessageScreen(
     onClickBack: () -> Unit,
     onClickEncryptMail: () -> Unit,
     onClickSignMail: () -> Unit,
+    onClickNavigateToKeyGenerator: () -> Unit,
     onDismissDialog: () -> Unit,
     onDismissSnackBar: () -> Unit,
     onInputSymmetricKey: (String) -> Unit,
-    onSavePublicKey: (TextFieldValue) -> Unit,
+    onSavePrivateKey: (TextFieldValue) -> Unit,
     onSaveSymmetricKey: (TextFieldValue) -> Unit,
     updateSentTo: (TextFieldValue) -> Unit,
     updateSubject: (TextFieldValue) -> Unit,
@@ -277,7 +283,7 @@ private fun SendMessageScreen(
         sheetBackgroundColor = GmaylTheme.color.mist10,
         sheetContent = {
             when {
-                viewState.showEncryptionDialog -> InputKeyDialog(
+                viewState.showEncryptionDialog -> InputSymmetricKeyDialog(
                     key = symmetricKey,
                     title = stringResource(id = R.string.send_mail_symmetric_key_title),
                     hint = stringResource(id = R.string.send_mail_symmetric_key_hint),
@@ -289,14 +295,15 @@ private fun SendMessageScreen(
                         onSaveSymmetricKey(it)
                     },
                 )
-                viewState.showDigitalSignDialog -> InputKeyDialog(
-                    key = publicKey,
-                    title = stringResource(id = R.string.send_mail_public_key_title),
-                    hint = stringResource(id = R.string.send_mail_public_key_hint),
-                    onChangeKey = {},
+                viewState.showDigitalSignDialog -> InputKeyPairDialog(
+                    key = privateKey,
+                    title = stringResource(id = R.string.send_mail_private_key_title),
+                    hint = stringResource(id = R.string.send_mail_private_key_hint),
+                    info = stringResource(id = R.string.send_mail_check_private_key),
+                    onClickNavigateToKeyGenerator = onClickNavigateToKeyGenerator,
                     onClickSave = {
                         coroutineScope.launch { sheetState.hide() }
-                        onSavePublicKey(it)
+                        onSavePrivateKey(it)
                     },
                 )
                 else -> Box(modifier = Modifier.size(1.dp))
@@ -324,7 +331,7 @@ private fun SendMessageScreen(
                 sendTo = sendTo,
                 subject = subject,
                 message = message,
-                publicKey = publicKey,
+                privateKey = privateKey,
                 symmetricKey = symmetricKey,
                 shouldEncrypt = shouldEncrypt,
                 shouldAddDigitalSign = shouldAddDigitalSign,
@@ -348,7 +355,7 @@ private fun SendMessageScreenContent(
     sendTo: TextFieldValue,
     subject: TextFieldValue,
     message: TextFieldValue,
-    publicKey: TextFieldValue,
+    privateKey: TextFieldValue,
     symmetricKey: TextFieldValue,
     shouldEncrypt: Boolean,
     shouldAddDigitalSign: Boolean,
@@ -402,6 +409,7 @@ private fun SendMessageScreenContent(
         Spacer(modifier = Modifier.height(16.dp))
         Divider(color = GmaylTheme.color.mist30)
         GmaylKeypair(
+            modifier = Modifier.padding(vertical = 4.dp),
             keyContent = {
                  GmaylTextSelection(
                      title = stringResource(id = R.string.send_mail_encrypt_message),
@@ -439,11 +447,12 @@ private fun SendMessageScreenContent(
         )
         Divider(color = GmaylTheme.color.mist30)
         GmaylKeypair(
+            modifier = Modifier.padding(vertical = 4.dp),
             keyContent = {
                 GmaylTextSelection(
                     title = stringResource(id = R.string.send_mail_digital_sign),
-                    subtitle = publicKey.text,
-                    prefixSubtitle = stringResource(id = R.string.send_mail_public_key_title),
+                    subtitle = privateKey.text,
+                    prefixSubtitle = stringResource(id = R.string.send_mail_private_key_title),
                     enabled = shouldAddDigitalSign && !viewState.loading,
                     onClick = onClickSignMail,
                 )
@@ -497,19 +506,20 @@ private fun PreviewSendMessageScreen() {
         sendTo = TextFieldValue("someone@gmail.com"),
         subject = TextFieldValue(),
         message = TextFieldValue(),
-        publicKey = TextFieldValue(),
+        privateKey = TextFieldValue(),
         symmetricKey = TextFieldValue("This is symmetric key"),
         shouldEncrypt = true,
         shouldAddDigitalSign = false,
         onClickBack = {},
-        onDismissDialog = {},
-        onDismissSnackBar = {},
         onClickEncryptMail = {},
         onClickSignMail = {},
+        onClickNavigateToKeyGenerator = {},
+        onDismissDialog = {},
+        onDismissSnackBar = {},
         onInputSymmetricKey = {},
         onChangeShouldEncrypt = {},
         onChangeShouldAddDigitalSign = {},
-        onSavePublicKey = {},
+        onSavePrivateKey = {},
         onSaveSymmetricKey = {},
         updateSentTo = {},
         updateSubject = {},

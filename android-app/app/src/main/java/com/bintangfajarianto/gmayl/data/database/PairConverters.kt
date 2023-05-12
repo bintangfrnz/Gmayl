@@ -4,15 +4,15 @@ import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import com.bintangfajarianto.gmayl.core.serializer.decodeTo
 import com.bintangfajarianto.gmayl.core.serializer.encodeToString
-import com.bintangfajarianto.gmayl.data.model.auth.User
+import kotlinx.serialization.serializer
 
 @ProvidedTypeConverter
-class UserConverters {
+class PairConverters {
     @TypeConverter
-    fun userToString(user: User) : String =
-        user.encodeToString(User.serializer())
+    fun pairToString(pair: Pair<String, String>): String =
+        pair.encodeToString(serializer())
 
     @TypeConverter
-    fun stringToUser(user: String): User =
-        user.decodeTo(User.serializer()) ?: User()
+    fun stringToPair(pair: String): Pair<String, String> =
+        pair.decodeTo(serializer()) ?: ("" to "")
 }

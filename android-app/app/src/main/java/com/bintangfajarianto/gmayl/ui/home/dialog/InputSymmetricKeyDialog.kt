@@ -23,7 +23,7 @@ import com.bintangfajarianto.gmayl.ui.widget.GmaylPrimaryButton
 import com.bintangfajarianto.gmayl.ui.widget.GmaylTextInput
 
 @Composable
-fun InputKeyDialog(
+fun InputSymmetricKeyDialog(
     key: TextFieldValue,
     onChangeKey: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -60,7 +60,7 @@ fun InputKeyDialog(
         )
         Spacer(modifier = Modifier.height(16.dp))
         GmaylPrimaryButton(
-            label = stringResource(id = R.string.send_mail_save_key),
+            label = stringResource(id = R.string.send_mail_submit_key),
             loading = loading,
             enabled = newKey != key && enabled,
             onClick = { onClickSave(newKey) },
@@ -71,8 +71,8 @@ fun InputKeyDialog(
 
 @Preview
 @Composable
-private fun PreviewInputKeyDialog() {
-    InputKeyDialog(
+private fun PreviewInputSymmetricKeyDialog() {
+    InputSymmetricKeyDialog(
         key = TextFieldValue("bintangfrnz_13519138"),
         title = stringResource(id = R.string.send_mail_symmetric_key_title),
         hint = stringResource(id = R.string.send_mail_symmetric_key_hint),

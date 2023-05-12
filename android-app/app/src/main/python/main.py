@@ -23,21 +23,22 @@ def generate_key_pair() -> Tuple[str, str]:
     ecdsa = ECDSA(ecc)
     return ecdsa.generate_key_pair()
 
-def sign(private_key: str, message: str) -> Tuple[int, int]:
+def sign(private_key: str, message: str) -> Tuple[str, str]:
     sha3 = SHA3_256()
     hash = sha3.keccak(message)
 
     ecc = ECC()
     ecdsa = ECDSA(ecc)
-    return ecdsa.sign(private_key, hash)
+    signature = ecdsa.sign(private_key, hash)
+    return str(signature[0]), str(signature[1])
 
-def verify(public_key: str, message: str, r: int, s: int) -> bool:
+def verify(public_key: str, message: str, r: str, s: str) -> bool:
     sha3 = SHA3_256()
     hash = sha3.keccak(message)
 
     ecc = ECC()
     ecdsa = ECDSA(ecc)
-    return ecdsa.verify(public_key, hash, (r, s))
+    return ecdsa.verify(public_key, hash, (int(r), int(s)))
 
 # Testing Digital Sign
 '''
