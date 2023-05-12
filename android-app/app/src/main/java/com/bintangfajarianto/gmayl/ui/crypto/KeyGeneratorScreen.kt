@@ -259,7 +259,7 @@ private fun KeyGeneratorScreenContent(
         )
         GmaylSecondaryButton(
             label = stringResource(id = R.string.key_generator_generate_reset_key),
-            enabled = !viewState.loading,
+            enabled = !viewState.loading && !viewState.privateKey.isNullOrEmpty(),
             onClick = onClickResetKey,
         )
     }

@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -38,6 +39,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bintangfajarianto.gmayl.R
 import com.bintangfajarianto.gmayl.feature.vm.auth.LoginAction
@@ -47,6 +49,7 @@ import com.bintangfajarianto.gmayl.theme.GmaylTheme
 import com.bintangfajarianto.gmayl.ui.base.BaseDialog
 import com.bintangfajarianto.gmayl.ui.widget.GmaylPrimaryButton
 import com.bintangfajarianto.gmayl.ui.widget.GmaylTextInput
+import com.bintangfajarianto.gmayl.utils.parseHtmlText
 import kotlinx.coroutines.launch
 import org.kodein.di.compose.rememberViewModel
 
@@ -231,6 +234,28 @@ private fun LoginScreenContent(
                 enabled = viewState.validEmail && viewState.validPassword && !viewState.loading,
                 onClick = onClickLogin,
             )
+            Spacer(modifier = Modifier.height(32.dp))
+            Text(
+                text = parseHtmlText(stringResource(id = R.string.copyright)),
+                style = GmaylTheme.typography.contentMediumRegular,
+                color = GmaylTheme.color.mist70,
+            )
         }
     }
+}
+
+@Preview
+@Composable
+private fun PreviewLoginScreen() {
+    LoginScreen(
+        viewState = LoginViewState(),
+        email = TextFieldValue(),
+        password = TextFieldValue(),
+        visiblePassword = false,
+        onChangeEmail = {},
+        onChangePassword = {},
+        onChangeVisiblePassword = {},
+        onDismissDialog = {},
+        onClickLogin = {},
+    )
 }
