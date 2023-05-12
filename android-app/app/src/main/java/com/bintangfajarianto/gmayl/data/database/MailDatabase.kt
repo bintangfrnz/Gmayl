@@ -6,7 +6,7 @@ import androidx.room.TypeConverters
 import com.bintangfajarianto.gmayl.data.model.home.InboxMail
 import com.bintangfajarianto.gmayl.data.model.home.SentMail
 
-@TypeConverters(UserConverters::class)
+@TypeConverters(UserConverters::class, PairConverters::class)
 @Database(
     entities = [InboxMail::class, SentMail::class],
     version = 1

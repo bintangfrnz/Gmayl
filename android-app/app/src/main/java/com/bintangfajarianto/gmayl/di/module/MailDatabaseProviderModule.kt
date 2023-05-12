@@ -2,6 +2,7 @@ package com.bintangfajarianto.gmayl.di.module
 
 import androidx.room.Room
 import com.bintangfajarianto.gmayl.data.database.MailDatabase
+import com.bintangfajarianto.gmayl.data.database.PairConverters
 import com.bintangfajarianto.gmayl.data.database.UserConverters
 import com.bintangfajarianto.gmayl.di.constant.AppConstants
 import org.kodein.di.DI
@@ -16,6 +17,10 @@ val MailDatabaseProviderModule: DI.Module
                 context = instance(tag = AppConstants.APPLICATION_CONTEXT),
                 klass = MailDatabase::class.java,
                 name = MailDatabase.DATABASE_NAME,
-            ).addTypeConverter(UserConverters()).build()
+            ).addTypeConverter(
+                UserConverters()
+            ).addTypeConverter(
+                PairConverters()
+            ).build()
         }
     }

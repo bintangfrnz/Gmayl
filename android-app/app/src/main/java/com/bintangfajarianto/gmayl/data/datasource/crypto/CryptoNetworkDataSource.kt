@@ -3,6 +3,7 @@ package com.bintangfajarianto.gmayl.data.datasource.crypto
 import com.bintangfajarianto.gmayl.data.python.BystarBlockCipher
 import com.bintangfajarianto.gmayl.data.python.DigitalSign
 import com.bintangfajarianto.gmayl.data.repository.crypto.CryptoNetworkRepository
+import java.math.BigInteger
 
 internal class CryptoNetworkDataSource(
     private val bystarBlockCipher: BystarBlockCipher,
@@ -14,9 +15,9 @@ internal class CryptoNetworkDataSource(
     override suspend fun generateKeyPair(): Pair<String, String> =
         digitalSign.generateKeyPair()
 
-    override suspend fun sign(privateKey: String, message: String): Pair<Int, Int> =
+    override suspend fun sign(privateKey: String, message: String): Pair<BigInteger, BigInteger> =
         digitalSign.sign(privateKey, message)
 
-    override suspend fun verify(publicKey: String, message: String, r: Int, s: Int): Boolean =
+    override suspend fun verify(publicKey: String, message: String, r: BigInteger, s: BigInteger): Boolean =
         digitalSign.verify(publicKey, message, r, s)
 }
