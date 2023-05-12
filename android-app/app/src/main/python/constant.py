@@ -10,8 +10,8 @@ TEST_DIRECTORY = "test"
 RESULT_DIRECTORY = "result"
 AVALANCHE_EFFECT_DIRECTORY = "avalanche_effect"
 
-PLAIN_TEXT = "This Bystar cipher created by Bintang NIM (13519138) on March 5." # 64 bytes (4 blocks)
-KEY = "Bystar138Cipherz" # 16 bytes
+PLAIN_TEXT = "This Gmayl app created by Bintang NIM (13519138) as Kompre task." # 64 bytes (4 blocks)
+KEY = "Bintangfrnz19138" # 16 bytes
 
 # Shuffled consecutive numbers (1...128) with seed 230501 (authors birthday)
 PERMUTATION_TABLE = [
