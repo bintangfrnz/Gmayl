@@ -9,13 +9,13 @@ class SendMailUseCase(
     private val repository: HomeRepository,
 ) : BaseUseCase<SendMailUseCase.Params, SendMailUseCaseActionResultSuccess> {
     override suspend fun invoke(param: Params): SendMailUseCaseActionResultSuccess {
-        repository.sendMail(param.mail, param.publicKey, param.symmetricKey)
+        repository.sendMail(param.mail, param.privateKey, param.symmetricKey)
         return SendMailUseCaseActionResultSuccess
     }
 
     data class Params(
         val mail: Mail,
-        val publicKey: String,
+        val privateKey: String,
         val symmetricKey: String,
     )
 
