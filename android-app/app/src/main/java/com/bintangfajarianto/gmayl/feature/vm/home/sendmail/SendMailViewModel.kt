@@ -3,6 +3,7 @@ package com.bintangfajarianto.gmayl.feature.vm.home.sendmail
 import com.bintangfajarianto.gmayl.base.BaseViewModel
 import com.bintangfajarianto.gmayl.core.RouteDestination
 import com.bintangfajarianto.gmayl.core.RouteDestinationHandler
+import com.bintangfajarianto.gmayl.core.router.CryptoRouter
 import com.bintangfajarianto.gmayl.core.router.HomeRouter
 import com.bintangfajarianto.gmayl.core.validator.EmailValidator
 import com.bintangfajarianto.gmayl.core.validator.EmailValidatorActionResult
@@ -31,10 +32,11 @@ class SendMailViewModel(
             is SendMailAction.OnClickSendMail -> {
                 callEffect {
                     delay(1000L)
-                    sendMail(action.mail, action.publicKey, action.symmetricKey)
+                    sendMail(action.mail, action.privateKey, action.symmetricKey)
                 }
                 SendMailActionResult.ShowLoading
             }
+            SendMailAction.OnClickNavigateToKeyGenerator -> SendMailActionResult.NavigateToKeyGenerator
             SendMailAction.OnDismissDialog -> SendMailActionResult.DismissDialog
             SendMailAction.OnDismissSnackBar -> SendMailActionResult.SetDataCondition(null)
             is SendMailAction.OnInputSendToEmail -> handleInputSendToEmail(action.email)
@@ -42,8 +44,8 @@ class SendMailViewModel(
             is SendMailAction.OnReceiveDataCondition -> SendMailActionResult.SetDataCondition(action.dataMsgCondition)
         }
 
-    private suspend fun sendMail(mail: Mail, publicKey: String, symmetricKey: String): SendMailActionResult {
-        sendMailUseCase.invoke(SendMailUseCase.Params(mail, publicKey, symmetricKey))
+    private suspend fun sendMail(mail: Mail, privateKey: String, symmetricKey: String): SendMailActionResult {
+        sendMailUseCase.invoke(SendMailUseCase.Params(mail, privateKey, symmetricKey))
         return SendMailActionResult.NavigateToHome
     }
 
@@ -85,6 +87,7 @@ class SendMailViewModel(
 
     override fun navigateToReducer(actionResult: SendMailActionResult): RouteDestination? =
         when (actionResult) {
+            SendMailActionResult.NavigateToKeyGenerator -> CryptoRouter.KeyGeneratorPage
             SendMailActionResult.NavigateToHome -> HomeRouter.HomePage
             else -> null
         }
@@ -125,7 +128,8 @@ class SendMailViewModel(
 
     private fun showDigitalSignDialogReducer(actionResult: SendMailActionResult): Boolean =
         when (actionResult) {
-            SendMailActionResult.ShowDigitalSignDialog -> true
+            SendMailActionResult.ShowDigitalSignDialog,
+            SendMailActionResult.NavigateToKeyGenerator -> true
             else -> false
         }
 

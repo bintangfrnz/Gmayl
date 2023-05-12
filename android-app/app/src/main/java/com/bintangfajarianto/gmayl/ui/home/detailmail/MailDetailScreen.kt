@@ -54,7 +54,7 @@ import com.bintangfajarianto.gmayl.feature.vm.home.detailmail.MailDetailViewStat
 import com.bintangfajarianto.gmayl.theme.GmaylTheme
 import com.bintangfajarianto.gmayl.ui.base.BaseDialog
 import com.bintangfajarianto.gmayl.ui.home.detailmail.widget.SenderItem
-import com.bintangfajarianto.gmayl.ui.home.dialog.InputKeyDialog
+import com.bintangfajarianto.gmayl.ui.home.dialog.InputSymmetricKeyDialog
 import com.bintangfajarianto.gmayl.ui.widget.GmaylAppBar
 import com.bintangfajarianto.gmayl.ui.widget.GmaylKeypair
 import com.bintangfajarianto.gmayl.ui.widget.GmaylSnackBarHost
@@ -187,7 +187,7 @@ private fun MailDetailScreen(
                     onClickNegative = onDismissDialog,
                     onClickPositive = onSubmitDeleteMail,
                 )
-                viewState.showDecryptionDialog -> InputKeyDialog(
+                viewState.showDecryptionDialog -> InputSymmetricKeyDialog(
                     key = symmetricKey,
                     title = stringResource(id = R.string.send_mail_symmetric_key_title),
                     hint = stringResource(id = R.string.send_mail_symmetric_key_hint),
@@ -363,7 +363,6 @@ private fun PreviewMailDetailScreen() {
             subject = "[Tugas 1] Ini contoh subject aja [Tugas 1] Ini contoh subject aja",
             body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent interdum nibh at porttitor pharetra. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Maecenas mattis vitae nisl at convallis. Quisque rhoncus, felis id bibendum commodo, risus nulla faucibus magna, id eleifend eros ante non sapien. Quisque.",
             sentTime = "2023-03-05T13:15:30+07:00",
-            encrypted = false,
         ),
         mailType = DrawerItemType.INBOX,
         symmetricKey = TextFieldValue(),
