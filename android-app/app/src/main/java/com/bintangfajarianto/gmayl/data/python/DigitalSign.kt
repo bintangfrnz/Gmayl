@@ -4,7 +4,7 @@ import android.content.Context
 import com.bintangfajarianto.gmayl.data.constant.PythonConstant
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
-import java.math.BigInteger
+import io.github.aakira.napier.Napier
 
 class DigitalSign(private val context: Context) {
     fun generateKeyPair(): Pair<String, String> {
@@ -19,7 +19,7 @@ class DigitalSign(private val context: Context) {
         return parseStringToStringPair(result.toString())
     }
 
-    fun sign(privateKey: String, message: String): Pair<BigInteger, BigInteger> {
+    fun sign(privateKey: String, message: String): Pair<String, String> {
         if (!Python.isStarted()) {
             Python.start(AndroidPlatform(context))
         }
@@ -28,10 +28,10 @@ class DigitalSign(private val context: Context) {
         val pyObject = py.getModule(PythonConstant.MAIN)
         val result = pyObject.callAttr(PythonConstant.SIGN, privateKey, message)
 
-        return parseStringToBigIntegerPair(result.toString())
+        return parseStringToStringPair(result.toString())
     }
 
-    fun verify(publicKey: String, message: String, r: BigInteger, s: BigInteger): Boolean {
+    fun verify(publicKey: String, message: String, r: String, s: String): Boolean {
         if (!Python.isStarted()) {
             Python.start(AndroidPlatform(context))
         }
@@ -45,12 +45,9 @@ class DigitalSign(private val context: Context) {
 
     companion object {
         private fun parseStringToStringPair(text: String): Pair<String, String> {
+            Napier.i("text: $text", tag = "DEBUG")
             val listItem = text.drop(2).dropLast(2).split("', '")
-            return listItem[0] to listItem[1]
-        }
-
-        private fun parseStringToBigIntegerPair(text: String): Pair<BigInteger, BigInteger> {
-            val listItem = text.drop(1).dropLast(1).split(", ").map { it.toBigInteger() }
+            Napier.i("listItem: $listItem", tag = "DEBUG")
             return listItem[0] to listItem[1]
         }
 
