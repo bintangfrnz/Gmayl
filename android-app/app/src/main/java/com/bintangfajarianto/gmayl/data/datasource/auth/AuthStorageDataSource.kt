@@ -3,8 +3,8 @@ package com.bintangfajarianto.gmayl.data.datasource.auth
 import com.bintangfajarianto.gmayl.base.DataResult
 import com.bintangfajarianto.gmayl.base.Error
 import com.bintangfajarianto.gmayl.base.Success
-import com.bintangfajarianto.gmayl.data.decodeTo
-import com.bintangfajarianto.gmayl.data.encodeToString
+import com.bintangfajarianto.gmayl.core.serializer.decodeTo
+import com.bintangfajarianto.gmayl.core.serializer.encodeToString
 import com.bintangfajarianto.gmayl.data.model.auth.User
 import com.bintangfajarianto.gmayl.data.repository.auth.AuthStorageRepository
 import com.bintangfajarianto.gmayl.data.storage.KeyValueStorage

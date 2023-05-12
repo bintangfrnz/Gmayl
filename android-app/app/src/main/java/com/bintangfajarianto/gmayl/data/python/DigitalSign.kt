@@ -4,6 +4,7 @@ import android.content.Context
 import com.bintangfajarianto.gmayl.data.constant.PythonConstant
 import com.chaquo.python.Python
 import com.chaquo.python.android.AndroidPlatform
+import java.math.BigInteger
 
 class DigitalSign(private val context: Context) {
     fun generateKeyPair(): Pair<String, String> {
@@ -18,7 +19,7 @@ class DigitalSign(private val context: Context) {
         return parseStringToStringPair(result.toString())
     }
 
-    fun sign(privateKey: String, message: String): Pair<Int, Int> {
+    fun sign(privateKey: String, message: String): Pair<BigInteger, BigInteger> {
         if (!Python.isStarted()) {
             Python.start(AndroidPlatform(context))
         }
@@ -27,10 +28,10 @@ class DigitalSign(private val context: Context) {
         val pyObject = py.getModule(PythonConstant.MAIN)
         val result = pyObject.callAttr(PythonConstant.SIGN, privateKey, message)
 
-        return parseStringToIntPair(result.toString())
+        return parseStringToBigIntegerPair(result.toString())
     }
 
-    fun verify(publicKey: String, message: String, r: Int, s: Int): Boolean {
+    fun verify(publicKey: String, message: String, r: BigInteger, s: BigInteger): Boolean {
         if (!Python.isStarted()) {
             Python.start(AndroidPlatform(context))
         }
@@ -48,8 +49,8 @@ class DigitalSign(private val context: Context) {
             return listItem[0] to listItem[1]
         }
 
-        private fun parseStringToIntPair(text: String): Pair<Int, Int> {
-            val listItem = text.drop(1).dropLast(1).split(", ").map { it.toInt() }
+        private fun parseStringToBigIntegerPair(text: String): Pair<BigInteger, BigInteger> {
+            val listItem = text.drop(1).dropLast(1).split(", ").map { it.toBigInteger() }
             return listItem[0] to listItem[1]
         }
 
