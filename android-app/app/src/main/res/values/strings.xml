@@ -23,7 +23,7 @@
     <string name="send_mail_message">Message</string>
     <string name="send_mail_message_hint">Enter your message here…</string>
     <string name="send_mail_encrypt_message">Encrypt Your Message</string>
-    <string name="send_mail_digital_sign">Add Digital Sign</string>
+    <string name="send_mail_digital_signature">Add Digital Signature</string>
     <string name="send_mail_send">Send</string>
 
     <string name="send_mail_symmetric_key_title">Symmetric Key</string>
@@ -41,7 +41,7 @@
     <string name="mail_detail_date">Date</string>
     <string name="mail_detail_decrypt_message_title">Decrypted message</string>
     <string name="mail_detail_decrypt_message">Decrypt Your Message</string>
-    <string name="mail_detail_digital_sign">Verify Digital Sign</string>
+    <string name="mail_detail_digital_signature">Verify Digital Signature</string>
     <string name="mail_detail_public_key_title">Public Key</string>
     <string name="mail_detail_public_key_hint">Enter a public key</string>
     <string name="mail_detail_check_public_key">Find the public key here.</string>

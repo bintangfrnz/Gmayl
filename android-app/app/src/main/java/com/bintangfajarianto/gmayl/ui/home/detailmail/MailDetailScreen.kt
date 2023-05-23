@@ -454,7 +454,7 @@ private fun MailDetailScreenContent(
                 modifier = Modifier.padding(vertical = 4.dp),
                 keyContent = {
                     GmaylTextSelection(
-                        title = stringResource(id = R.string.mail_detail_digital_sign),
+                        title = stringResource(id = R.string.mail_detail_digital_signature),
                         subtitle = publicKey.text,
                         prefixSubtitle = stringResource(id = R.string.mail_detail_public_key_title),
                         enabled = shouldVerifyDigitalSign && !viewState.loading,

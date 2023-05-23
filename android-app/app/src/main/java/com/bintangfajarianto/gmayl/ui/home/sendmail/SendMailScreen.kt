@@ -450,7 +450,7 @@ private fun SendMessageScreenContent(
             modifier = Modifier.padding(vertical = 4.dp),
             keyContent = {
                 GmaylTextSelection(
-                    title = stringResource(id = R.string.send_mail_digital_sign),
+                    title = stringResource(id = R.string.send_mail_digital_signature),
                     subtitle = privateKey.text,
                     prefixSubtitle = stringResource(id = R.string.send_mail_private_key_title),
                     enabled = shouldAddDigitalSign && !viewState.loading,
